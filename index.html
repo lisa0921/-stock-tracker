@@ -432,12 +432,12 @@ function onTickerInput() {
 }
 
 function calcTax() {
+  const taxBox = document.getElementById('tax-preview');
+  if (!taxBox) return;
   const type = formState.type;
   const market = formState.market;
   const price = parseFloat(document.getElementById('f-price').value) || 0;
   const qty = parseInt(document.getElementById('f-qty').value) || 0;
-  const taxBox = document.getElementById('tax-preview');
-
   if (!price || !qty) { taxBox.style.display='none'; return; }
 
   const tradeAmt = price * qty;

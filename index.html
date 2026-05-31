@@ -322,6 +322,42 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 const SB_URL='https://mwvgecynapndsmjjtddv.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13dmdlY3luYXBuZHNtamp0ZGR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyMTk1MjUsImV4cCI6MjA5NTc5NTUyNX0.jNV_Y3la3tqYatc7g3d2wSiI8ZYX_DlEVQhtioV7kKc';
 
+const TW_NAMES = {
+  "2330":"台積電","2303":"聯電","2308":"台達電","2317":"鴻海","2327":"國巨",
+  "2344":"華邦電","2347":"聯強","2352":"佳世達","2353":"宏碁","2354":"鴻準",
+  "2357":"華碩","2379":"瑞昱","2382":"廣達","2383":"台光電","2385":"群光",
+  "2388":"威盛","2395":"研華","2408":"南亞科","2409":"友達","2412":"中華電",
+  "2454":"聯發科","2474":"可成","2492":"華新科","2498":"宏達電",
+  "3008":"大立光","3034":"聯詠","3037":"欣興","3045":"台灣大",
+  "3105":"穩懋","3443":"創意","3481":"群創","3533":"嘉澤","3545":"敦泰",
+  "3673":"TPK-KY","3711":"日月光投控","4904":"遠傳","4938":"和碩",
+  "4958":"臻鼎-KY","5347":"世界","6409":"旭隼","6415":"矽力-KY",
+  "6446":"藥華藥","6505":"台塑化","6533":"晶心科","6770":"力積電",
+  "2882":"國泰金","2881":"富邦金","2886":"兆豐金","2891":"中信金",
+  "2884":"玉山金","2892":"第一金","2880":"華南金","2883":"開發金",
+  "2885":"元大金","2887":"台新金","2888":"新光金","2889":"國票金",
+  "2890":"永豐金","5880":"合庫金","2801":"彰銀","2812":"台中銀",
+  "1301":"台塑","1303":"南亞","1326":"台化","1101":"台泥","1102":"亞泥",
+  "1216":"統一","1402":"遠東新","1434":"福懋","1504":"東元","1590":"亞德客-KY",
+  "1605":"華新","1722":"台肥","2006":"東和鋼鐵","2015":"豐興",
+  "2049":"上銀","2059":"川湖","2101":"南港","2105":"正新",
+  "2204":"中華","2207":"和泰車","2227":"裕日車","2231":"為升",
+  "2301":"光寶科","2311":"日月光","2912":"統一超","2915":"潤泰全",
+  "9910":"豐泰","1210":"大成","1215":"卜蜂","1217":"愛之味",
+  "1218":"泰山","1219":"福壽","1225":"統一企業",
+  "0050":"元大台灣50","0056":"元大高股息","0057":"富邦摩台",
+  "00646":"元大S&P500","00662":"富邦NASDAQ","00713":"元大台灣高息低波",
+  "00878":"國泰永續高股息","00919":"群益台灣精選高息",
+  "00929":"復華台灣科技優息","00940":"元大臺灣價值高息",
+  "2610":"華航","2618":"長榮航","2603":"長榮","2609":"陽明","2615":"萬海",
+  "9914":"美利達","9921":"巨大","1476":"儒鴻","1477":"聚陽",
+  "6669":"緯穎","6488":"環球晶","3529":"力旺","2337":"旺宏",
+  "5274":"信驊","3563":"牧德","5871":"中租-KY","2823":"中壽",
+  "2514":"龍邦","2520":"冠德","5522":"遠雄","5534":"長虹",
+  "6139":"亞翔","6230":"超眾","3231":"緯創","2356":"英業達",
+  "3702":"大聯大","2324":"仁寶","6286":"立錡","3682":"亞太電"
+};
+
 let session=null, trades=[], rules={sl:8,tp:15,trail:5,avg_down:10}, perStock={};
 let formState={type:'buy',market:'TW'}, histFilter='all', authTab='login';
 
@@ -349,20 +385,21 @@ async function lookupStock() {
   loading.style.display='block'; errEl.style.display='none'; preview.classList.remove('show'); btn.disabled=true;
 
   const symbol = getYahooSymbol(ticker, formState.market);
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d&lang=zh-TW`;
+  const url = `https://stock-proxy.lisa09210921.workers.dev/?symbol=${symbol}`;
 
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error('查無此股票');
     const data = await res.json();
-    const meta = data?.chart?.result?.[0]?.meta;
-    if (!meta) throw new Error('查無此股票代碼，請確認後重試');
+    if (data.error) throw new Error(data.error);
+    if (!data.price) throw new Error('查無此股票代碼，請確認後重試');
 
-    const name = meta.longName || meta.shortName || ticker;
-    const price = meta.regularMarketPrice;
-    const prevClose = meta.chartPreviousClose || meta.previousClose;
+    const twName = formState.market === 'TW' ? TW_NAMES[ticker] : null;
+    const name = twName || data.longName || data.shortName || ticker;
+    const price = data.price;
+    const prevClose = data.previousClose;
     const chg = prevClose ? ((price-prevClose)/prevClose*100) : 0;
-    const currency = meta.currency || (formState.market==='TW'?'TWD':'USD');
+    const currency = data.currency || (formState.market==='TW'?'TWD':'USD');
     const sym = currency==='USD'?'$':'';
 
     // Fill form
@@ -586,9 +623,10 @@ function renderUpdatePrices(positions){
 async function quickLookup(ticker, market){
   const symbol=getYahooSymbol(ticker,market);
   try{
-    const res=await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d`);
+    const res=await fetch(`https://stock-proxy.lisa09210921.workers.dev/?symbol=${symbol}`);
     const data=await res.json();
-    const price=data?.chart?.result?.[0]?.meta?.regularMarketPrice;
+    if(data.error) throw new Error(data.error);
+    const price=data?.price;
     if(price){
       document.getElementById('up-c-'+ticker).value=price;
       const high=parseFloat(document.getElementById('up-h-'+ticker).value)||0;

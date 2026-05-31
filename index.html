@@ -252,7 +252,7 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 
         <div class="form-row2">
           <div class="form-group"><label class="form-label">日期 *</label><input id="f-date" type="date"></div>
-          <div class="form-group"><label class="form-label">交易價格 *</label><input id="f-price" type="number" step="0.01" placeholder="自動帶入現價" inputmode="decimal"></div>
+          <div class="form-group"><label class="form-label">交易價格 *</label><input id="f-price" type="number" step="0.01" placeholder="自動帶入現價" inputmode="decimal" oninput="calcTax()"></div>
         </div>
         <div class="form-row2">
           <div class="form-group"><label class="form-label">股數 *</label><input id="f-qty" type="number" placeholder="1000" inputmode="numeric"></div>
@@ -427,9 +427,65 @@ async function lookupStock() {
 }
 
 function onTickerInput() {
-  // hide preview when ticker changes
   document.getElementById('stock-preview').classList.remove('show');
   document.getElementById('lookup-error').style.display='none';
+}
+
+function calcTax() {
+  const type = formState.type;
+  const market = formState.market;
+  const price = parseFloat(document.getElementById('f-price').value) || 0;
+  const qty = parseInt(document.getElementById('f-qty').value) || 0;
+  const taxBox = document.getElementById('tax-preview');
+
+  if (!price || !qty) { taxBox.style.display='none'; return; }
+
+  const tradeAmt = price * qty;
+
+  // 手續費：台股 0.1425%（買賣皆有），美股約 $1~5 固定或免佣
+  const commRate = market === 'TW' ? 0.001425 : 0;
+  const comm = market === 'TW' ? Math.max(Math.round(tradeAmt * commRate), 20) : 0;
+
+  // 交易稅：台股賣出千分之三（ETF 千分之一），美股 SEC fee 賣出 0.0000278
+  let taxRate = 0, taxLabel = '';
+  if (type === 'sell') {
+    if (market === 'TW') {
+      const ticker = document.getElementById('f-ticker').value.trim();
+      const isETF = ticker.startsWith('00') || ticker === '0050' || ticker === '0056';
+      taxRate = isETF ? 0.001 : 0.003;
+      taxLabel = isETF ? '證交稅（ETF 千分之一）' : '證交稅（千分之三）';
+    } else {
+      taxRate = 0.0000278;
+      taxLabel = 'SEC Fee';
+    }
+  }
+  const tax = Math.ceil(tradeAmt * taxRate);
+  const totalCost = comm + tax;
+
+  // Auto-fill fee field
+  document.getElementById('f-fee').value = totalCost || '';
+
+  let html = `<div style="font-weight:600;color:var(--up);margin-bottom:4px;">💰 費用試算（賣出）</div>`;
+  html += `<div style="display:flex;justify-content:space-between;"><span style="color:var(--text2);">成交金額</span><span>${market==='US'?'$':''}${tradeAmt.toLocaleString('zh-TW',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>`;
+  if (comm > 0) html += `<div style="display:flex;justify-content:space-between;"><span style="color:var(--text2);">手續費（0.1425%）</span><span>-${comm.toLocaleString()}</span></div>`;
+  if (tax > 0) html += `<div style="display:flex;justify-content:space-between;"><span style="color:var(--text2);">${taxLabel}</span><span style="color:var(--up);">-${tax.toLocaleString()}</span></div>`;
+  html += `<div style="display:flex;justify-content:space-between;border-top:0.5px solid rgba(239,83,80,0.2);margin-top:4px;padding-top:4px;font-weight:600;"><span>總費用</span><span style="color:var(--up);">-${totalCost.toLocaleString()}</span></div>`;
+
+  if (type === 'sell') {
+    taxBox.style.display = 'block';
+    taxBox.innerHTML = html;
+  } else {
+    // Buy - show commission only
+    if (comm > 0) {
+      let buyHtml = `<div style="font-weight:600;color:var(--text2);margin-bottom:4px;">💰 手續費試算（買入）</div>`;
+      buyHtml += `<div style="display:flex;justify-content:space-between;"><span style="color:var(--text2);">手續費（0.1425%，最低20元）</span><span>-${comm.toLocaleString()}</span></div>`;
+      document.getElementById('f-fee').value = comm;
+      taxBox.style.display = 'block';
+      taxBox.innerHTML = buyHtml;
+    } else {
+      taxBox.style.display = 'none';
+    }
+  }
 }
 
 // ── Supabase ────────────────────────────────────────────
@@ -653,8 +709,8 @@ function setSeg(field,val,btn){
   formState[field]=val;
   btn.closest('.seg').querySelectorAll('.seg-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  // Reset preview when market changes
   if(field==='market'){document.getElementById('stock-preview').classList.remove('show');document.getElementById('lookup-error').style.display='none';}
+  calcTax();
 }
 
 function setFilter(f,btn){histFilter=f;document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderHistory();}
@@ -689,6 +745,7 @@ function clearForm(){
   document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
   document.getElementById('stock-preview').classList.remove('show');
   document.getElementById('lookup-error').style.display='none';
+  document.getElementById('tax-preview').style.display='none';
 }
 
 async function handleDelete(id){if(!confirm('確定刪除？'))return;try{await deleteTrade(id);trades=trades.filter(t=>t.id!==id);renderAll();}catch(e){alert('刪除失敗：'+e.message);}}

@@ -421,10 +421,12 @@ const TW_NAMES = {
 async function fetchPrice(ticker, mkt) {
   const sym = (mkt==='TW'||mkt==='ETF') ? ticker+'.TW' : ticker;
   try {
-    const url = `${PROXY}https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1d&range=1d`;
-    const res = await fetch(url);
+    const ts = Date.now();
+    const url = `${PROXY}https://query2.finance.yahoo.com/v8/finance/chart/${sym}?interval=1m&range=1d&includePrePost=false&_t=${ts}`;
+    const res = await fetch(url, {cache: 'no-store'});
     const data = await res.json();
-    return data?.chart?.result?.[0]?.meta?.regularMarketPrice ?? null;
+    const meta = data?.chart?.result?.[0]?.meta;
+    return meta?.regularMarketPrice ?? null;
   } catch(e) { return null; }
 }
 

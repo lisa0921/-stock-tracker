@@ -419,14 +419,44 @@ const TW_NAMES = {
 };
 
 async function fetchPrice(ticker, mkt) {
-  const sym = (mkt==='TW'||mkt==='ETF') ? ticker+'.TW' : ticker;
+  if (mkt==='TW' || mkt==='ETF') return fetchTWPrice(ticker);
+  return fetchUSPrice(ticker);
+}
+
+async function fetchTWPrice(ticker) {
+  const ts = Date.now();
+  // 先試上市 (tse)，再試上櫃 (otc)
+  for (const ex of ['tse', 'otc']) {
+    try {
+      const url = `${PROXY}https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch=${ex}_${ticker}.tw&json=1&delay=0&_t=${ts}`;
+      const res = await fetch(url, {cache:'no-store'});
+      const data = await res.json();
+      const item = data?.msgArray?.[0];
+      if (!item) continue;
+      // z = 即時成交價，盤後或休市時為 '—'，改用 y (昨收)
+      const raw = (item.z && item.z !== '—') ? item.z : item.y;
+      const price = parseFloat(raw);
+      if (!isNaN(price) && price > 0) return price;
+    } catch(e) {}
+  }
+  return null;
+}
+
+async function fetchUSPrice(ticker) {
+  const ts = Date.now();
   try {
-    const ts = Date.now();
-    const url = `${PROXY}https://query2.finance.yahoo.com/v8/finance/chart/${sym}?interval=1m&range=1d&includePrePost=false&_t=${ts}`;
-    const res = await fetch(url, {cache: 'no-store'});
+    const url = `${PROXY}https://query1.finance.yahoo.com/v7/finance/quote?symbols=${ticker}&_t=${ts}`;
+    const res = await fetch(url, {cache:'no-store'});
     const data = await res.json();
-    const meta = data?.chart?.result?.[0]?.meta;
-    return meta?.regularMarketPrice ?? null;
+    const price = data?.quoteResponse?.result?.[0]?.regularMarketPrice;
+    if (price != null) return price;
+  } catch(e) {}
+  // fallback
+  try {
+    const url = `${PROXY}https://query2.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1m&range=1d&_t=${ts}`;
+    const res = await fetch(url, {cache:'no-store'});
+    const data = await res.json();
+    return data?.chart?.result?.[0]?.meta?.regularMarketPrice ?? null;
   } catch(e) { return null; }
 }
 
@@ -447,11 +477,29 @@ async function refreshAllPrices() {
   const btn = document.getElementById('refresh-btn');
   if (btn) { btn.disabled=true; btn.innerHTML='<span class="spinner"></span> 更新中'; }
   const holding = trades.filter(t => !t.selldate);
+  let ok=0, fail=0;
   for (const t of holding) {
     const price = await fetchPrice(t.ticker, t.market);
-    if (price) { t.curprice=price; await updateTrade(t.id,{curprice:price}); }
+    if (price != null) {
+      t.curprice = price;
+      await updateTrade(t.id, {curprice: price});
+      ok++;
+    } else {
+      fail++;
+    }
   }
-  if (btn) { btn.disabled=false; btn.innerHTML='⟳ 更新'; }
+  if (btn) {
+    btn.disabled=false;
+    if (holding.length===0) {
+      btn.innerHTML='⟳ 更新';
+    } else if (fail===0) {
+      btn.innerHTML=`✓ 已更新 ${ok} 檔`;
+      setTimeout(()=>{ if(btn) btn.innerHTML='⟳ 更新'; }, 3000);
+    } else {
+      btn.innerHTML=`⚠️ ${ok}/${ok+fail} 成功`;
+      setTimeout(()=>{ if(btn) btn.innerHTML='⟳ 更新'; }, 4000);
+    }
+  }
   renderPage();
 }
 

@@ -7,28 +7,28 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="股票記帳">
 <meta name="theme-color" content="#0a0f1e">
-<title>股票記帳本 Pro</title>
+<title>股票記帳本</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:      #0a0f1e;
-  --bg2:     #111827;
-  --bg3:     #1a2235;
-  --bg4:     #243048;
-  --border:  rgba(100,180,255,0.10);
-  --border2: rgba(100,180,255,0.20);
-  --text:    #e8f0ff;
-  --text2:   #7a99c0;
-  --text3:   #3d5278;
-  --up:      #00e5a0;
-  --up2:     rgba(0,229,160,0.12);
+  --bg:      #080d18;
+  --bg2:     #0f1623;
+  --bg3:     #182030;
+  --bg4:     #1f2940;
+  --border:  rgba(120,180,255,0.14);
+  --border2: rgba(120,180,255,0.28);
+  --text:    #f0f6ff;
+  --text2:   #a8c4e0;
+  --text3:   #6888a8;
+  --up:      #1fffb0;
+  --up2:     rgba(31,255,176,0.13);
   --dn:      #ff4d6d;
-  --dn2:     rgba(255,77,109,0.12);
-  --gold:    #fbbf24;
-  --blue:    #60a5fa;
-  --purple:  #a78bfa;
-  --cyan:    #22d3ee;
+  --dn2:     rgba(255,77,109,0.13);
+  --gold:    #fcd34d;
+  --blue:    #5bb8ff;
+  --purple:  #b39dfa;
+  --cyan:    #34e0f5;
   --r:       12px;
   --r-sm:    8px;
   --safe-t:  env(safe-area-inset-top,0px);
@@ -46,78 +46,81 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .header-sub{font-size:10px;color:var(--text3);font-family:var(--mono);}
 .main{flex:1;overflow-y:auto;padding:12px 12px 0;}
 .nav{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:8px 12px;background:var(--bg);border-top:1px solid var(--border);padding-bottom:calc(8px + var(--safe-b));flex-shrink:0;}
-.nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;border-radius:var(--r-sm);border:none;background:transparent;color:var(--text3);font-family:var(--sans);font-size:9px;cursor:pointer;transition:all .2s;}
-.nav-btn.active{color:var(--blue);background:rgba(96,165,250,0.10);}
-.nav-icon{font-size:18px;line-height:1;}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;border-radius:var(--r-sm);border:none;background:transparent;color:var(--text3);font-family:var(--sans);font-size:10px;font-weight:500;cursor:pointer;transition:all .2s;}
+.nav-btn.active{color:var(--blue);background:rgba(91,184,255,0.12);}
+.nav-icon{font-size:19px;line-height:1;}
 
 /* Auth */
 .auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;z-index:100;}
 .auth-logo{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--blue);margin-bottom:4px;}
-.auth-sub{font-size:12px;color:var(--text3);margin-bottom:36px;letter-spacing:2px;}
+.auth-sub{font-size:12px;color:var(--text2);margin-bottom:36px;letter-spacing:2px;}
 .auth-box{width:100%;max-width:360px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);padding:24px;}
-.auth-title{font-size:14px;color:var(--text2);margin-bottom:20px;text-align:center;}
+.auth-title{font-size:15px;color:var(--text);font-weight:600;margin-bottom:20px;text-align:center;}
 .field{margin-bottom:14px;}
-.field label{display:block;font-size:11px;color:var(--text3);margin-bottom:6px;font-family:var(--mono);}
-.field input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;color:var(--text);font-size:14px;font-family:var(--sans);outline:none;transition:border .2s;}
+.field label{display:block;font-size:11px;color:var(--text2);margin-bottom:6px;font-family:var(--mono);letter-spacing:.5px;}
+.field input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-sm);padding:10px 12px;color:var(--text);font-size:14px;font-family:var(--sans);outline:none;transition:border .2s;}
 .field input:focus{border-color:var(--blue);}
 .auth-err{font-size:12px;color:var(--dn);text-align:center;margin-bottom:10px;min-height:16px;}
 
 /* Cards */
 .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.sum-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;}
+.sum-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;}
 .sum-card.full{grid-column:1/-1;}
-.sum-label{font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:4px;}
-.sum-val{font-size:20px;font-weight:700;font-family:var(--mono);}
+.sum-label{font-size:11px;color:var(--text2);font-family:var(--mono);margin-bottom:6px;letter-spacing:.3px;}
+.sum-val{font-size:21px;font-weight:700;font-family:var(--mono);}
 .sum-val.up{color:var(--up);}
 .sum-val.dn{color:var(--dn);}
 .sum-val.neu{color:var(--text);}
-.sum-pct{font-size:11px;color:var(--text2);margin-top:2px;font-family:var(--mono);}
+.sum-pct{font-size:12px;color:var(--text2);margin-top:3px;font-family:var(--mono);}
 
 /* Holdings */
 .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.section-title{font-size:12px;color:var(--text3);font-family:var(--mono);letter-spacing:1px;}
-.trade-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px;position:relative;overflow:hidden;}
-.trade-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;}
-.trade-card.up-card::before{background:var(--up);}
-.trade-card.dn-card::before{background:var(--dn);}
+.section-title{font-size:11px;color:var(--text2);font-family:var(--mono);letter-spacing:1.5px;font-weight:700;}
+.trade-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:8px;position:relative;overflow:hidden;transition:border-color .2s;}
+.trade-card:hover{border-color:var(--border2);}
+.trade-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;}
+.trade-card.up-card::before{background:linear-gradient(180deg,var(--up),rgba(31,255,176,0.4));}
+.trade-card.dn-card::before{background:linear-gradient(180deg,var(--dn),rgba(255,77,109,0.4));}
 .trade-card.sold-card::before{background:var(--text3);}
-.trade-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
-.trade-ticker{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--text);}
-.trade-name{font-size:10px;color:var(--text3);margin-top:1px;}
+.trade-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.trade-ticker{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--text);}
+.trade-name{font-size:11px;color:var(--text2);margin-top:2px;}
 .trade-pnl{text-align:right;}
-.trade-pnl-val{font-family:var(--mono);font-size:15px;font-weight:700;}
-.trade-pnl-pct{font-family:var(--mono);font-size:11px;margin-top:1px;}
-.trade-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
-.trade-cell{background:var(--bg3);border-radius:6px;padding:6px 8px;}
-.trade-cell-label{font-size:9px;color:var(--text3);font-family:var(--mono);}
-.trade-cell-val{font-size:12px;font-family:var(--mono);margin-top:2px;}
-.trade-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.trade-pnl-val{font-family:var(--mono);font-size:16px;font-weight:700;}
+.trade-pnl-pct{font-family:var(--mono);font-size:12px;margin-top:2px;}
+.trade-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;}
+.trade-cell{background:var(--bg3);border-radius:7px;padding:7px 9px;border:1px solid rgba(255,255,255,0.04);}
+.trade-cell-label{font-size:10px;color:var(--text2);font-family:var(--mono);}
+.trade-cell-val{font-size:13px;font-family:var(--mono);margin-top:3px;color:var(--text);font-weight:500;}
+.trade-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
 .badge{font-size:9px;padding:2px 7px;border-radius:20px;font-family:var(--mono);}
-.badge-hold{background:rgba(96,165,250,0.15);color:var(--blue);}
-.badge-sold{background:rgba(122,153,192,0.15);color:var(--text3);}
-.alert-badge{font-size:9px;padding:2px 7px;border-radius:20px;margin-right:4px;margin-top:2px;display:inline-block;}
+.badge-hold{background:rgba(91,184,255,0.15);color:var(--blue);}
+.badge-sold{background:rgba(168,196,224,0.12);color:var(--text2);}
+.alert-badge{font-size:10px;padding:3px 8px;border-radius:20px;margin-right:4px;margin-top:2px;display:inline-block;font-weight:600;}
 .alert-sl{background:var(--dn2);color:var(--dn);}
 .alert-tp{background:var(--up2);color:var(--up);}
 
 /* Buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--r-sm);border:none;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:500;transition:all .15s;white-space:nowrap;}
-.btn-primary{background:var(--blue);color:#0a0f1e;}
-.btn-primary:hover{filter:brightness(1.1);}
-.btn-secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border);}
-.btn-danger{background:var(--dn2);color:var(--dn);border:1px solid rgba(255,77,109,0.2);}
-.btn-sm{padding:5px 10px;font-size:11px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--r-sm);border:none;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:600;transition:all .15s;white-space:nowrap;}
+.btn-primary{background:var(--blue);color:#080d18;}
+.btn-primary:hover{filter:brightness(1.12);}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border2);}
+.btn-secondary:hover{background:var(--bg4);}
+.btn-danger{background:var(--dn2);color:var(--dn);border:1px solid rgba(255,77,109,0.3);}
+.btn-danger:hover{background:rgba(255,77,109,0.2);}
+.btn-sm{padding:5px 11px;font-size:12px;}
 .btn-full{width:100%;}
-.btn-gold{background:rgba(251,191,36,0.15);color:var(--gold);}
+.btn-gold{background:rgba(252,211,77,0.13);color:var(--gold);border:1px solid rgba(252,211,77,0.25);}
 
 /* Modal */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:50;display:flex;align-items:flex-end;justify-content:center;}
-.modal{width:100%;max-width:480px;background:var(--bg2);border-radius:var(--r) var(--r) 0 0;padding:20px;padding-bottom:calc(20px + var(--safe-b));max-height:90dvh;overflow-y:auto;}
-.modal-title{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:50;display:flex;align-items:flex-end;justify-content:center;}
+.modal{width:100%;max-width:480px;background:var(--bg2);border-radius:var(--r) var(--r) 0 0;padding:20px;padding-bottom:calc(20px + var(--safe-b));max-height:90dvh;overflow-y:auto;border-top:1px solid var(--border2);}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;color:var(--text);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
 .form-field{margin-bottom:12px;}
-.form-field label{display:block;font-size:11px;color:var(--text3);margin-bottom:5px;font-family:var(--mono);}
+.form-field label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-family:var(--mono);letter-spacing:.4px;}
 .form-field input,
-.form-field select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 11px;color:var(--text);font-size:13px;font-family:var(--sans);outline:none;transition:border .2s;}
+.form-field select{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-sm);padding:10px 12px;color:var(--text);font-size:13px;font-family:var(--sans);outline:none;transition:border .2s;}
 .form-field input:focus,
 .form-field select:focus{border-color:var(--blue);}
 .form-field select option{background:var(--bg2);}
@@ -125,45 +128,47 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .price-lookup input{flex:1;}
 
 /* Fee box */
-.fee-box{background:var(--bg3);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:12px;font-size:11px;}
-.fee-row{display:flex;justify-content:space-between;color:var(--text2);margin-bottom:3px;}
-.fee-row.total{color:var(--text);font-weight:700;border-top:1px solid var(--border);padding-top:6px;margin-top:6px;}
+.fee-box{background:var(--bg3);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:12px;font-size:12px;border:1px solid var(--border);}
+.fee-row{display:flex;justify-content:space-between;color:var(--text2);margin-bottom:4px;}
+.fee-row span:last-child{font-family:var(--mono);color:var(--text);}
+.fee-row.total{color:var(--text);font-weight:700;border-top:1px solid var(--border2);padding-top:7px;margin-top:7px;font-size:13px;}
 
 /* Rules */
-.rule-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px;}
-.rule-title{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text);}
+.rule-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:8px;}
+.rule-title{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text);}
 .rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.rule-field label{font-size:10px;color:var(--text3);display:block;margin-bottom:4px;font-family:var(--mono);}
-.rule-field input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:7px 9px;color:var(--text);font-size:13px;font-family:var(--mono);outline:none;}
+.rule-field label{font-size:11px;color:var(--text2);display:block;margin-bottom:4px;font-family:var(--mono);}
+.rule-field input{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:8px 10px;color:var(--text);font-size:13px;font-family:var(--mono);outline:none;font-weight:600;}
 
 /* History */
-.hist-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.hist-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);font-size:12px;}
 .hist-left{flex:1;}
-.hist-ticker{font-family:var(--mono);font-weight:700;}
-.hist-meta{font-size:10px;color:var(--text3);margin-top:2px;}
+.hist-ticker{font-family:var(--mono);font-weight:700;color:var(--text);font-size:13px;}
+.hist-meta{font-size:11px;color:var(--text2);margin-top:3px;}
 .hist-right{text-align:right;}
-.hist-pnl{font-family:var(--mono);font-weight:700;}
+.hist-pnl{font-family:var(--mono);font-weight:700;font-size:14px;}
 
 /* Export */
 .export-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;}
-.export-title{font-size:13px;font-weight:600;margin-bottom:6px;}
-.export-desc{font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.5;}
+.export-title{font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text);}
+.export-desc{font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6;}
 
 /* Tabs */
 .tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
-.tab{padding:6px 14px;border-radius:20px;font-size:12px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;white-space:nowrap;font-family:var(--sans);transition:all .15s;}
-.tab.active{background:var(--blue);color:#0a0f1e;border-color:var(--blue);font-weight:600;}
+.tab{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap;font-family:var(--sans);transition:all .15s;}
+.tab.active{background:var(--blue);color:#080d18;border-color:var(--blue);font-weight:700;}
+.tab:hover:not(.active){color:var(--text);border-color:var(--border2);}
 
 /* Misc */
-.empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;}
+.empty{text-align:center;padding:40px 20px;color:var(--text2);font-size:14px;}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.tag{font-size:9px;padding:2px 6px;border-radius:4px;font-family:var(--mono);}
-.tag-tw{background:rgba(96,165,250,0.15);color:var(--blue);}
-.tag-us{background:rgba(167,139,250,0.15);color:var(--purple);}
-.tag-etf{background:rgba(34,211,238,0.15);color:var(--cyan);}
-.tag-usetf{background:rgba(251,191,36,0.15);color:var(--gold);}
+.tag{font-size:10px;padding:2px 7px;border-radius:4px;font-family:var(--mono);font-weight:700;}
+.tag-tw{background:rgba(91,184,255,0.18);color:var(--blue);}
+.tag-us{background:rgba(179,157,250,0.18);color:var(--purple);}
+.tag-etf{background:rgba(52,224,245,0.18);color:var(--cyan);}
+.tag-usetf{background:rgba(252,211,77,0.18);color:var(--gold);}
 </style>
 </head>
 <body>
@@ -172,8 +177,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 
   <!-- Auth -->
   <div class="auth-screen" id="auth-screen">
-    <div class="auth-logo">📈 STOCK PRO</div>
-    <div class="auth-sub">PORTFOLIO TRACKER</div>
+    <div class="auth-logo">📈 股票記帳本</div>
+    <div class="auth-sub">個人投資記帳系統</div>
     <div class="auth-box">
       <div class="auth-title" id="auth-mode-title">登入帳號</div>
       <div class="auth-err" id="auth-err"></div>
@@ -199,7 +204,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
   <div id="main-app" style="display:none;flex:1;overflow:hidden;flex-direction:column;">
     <div class="header">
       <div>
-        <div class="header-title">STOCK PRO</div>
+        <div class="header-title">股票記帳本</div>
         <div class="header-sub" id="header-user">—</div>
       </div>
       <div style="display:flex;gap:8px;">
@@ -342,7 +347,19 @@ async function onLogin() {
 async function loadTrades() {
   try {
     const data = await sbFetch('/rest/v1/trades?select=*&order=created_at.desc');
-    trades = Array.isArray(data) ? data : [];
+    trades = (Array.isArray(data) ? data : []).map(t => {
+      const buyprice  = t.buyprice  ?? t.price    ?? 0;
+      const shares    = t.shares    ?? t.qty      ?? 0;
+      const curprice  = t.curprice  ?? t.currPrice ?? buyprice;
+      const buydate   = t.buydate   ?? t.date     ?? '';
+      const isSell    = t.type === 'sell';
+      const selldate  = t.selldate  ?? (isSell ? buydate : null);
+      const sellprice = t.sellprice ?? (isSell ? buyprice : null);
+      return { ...t, buyprice, shares, curprice, buydate, selldate, sellprice,
+        market: t.market ?? 'TW',
+        name:   t.name   ?? t.ticker ?? '',
+      };
+    });
   } catch(e) { trades=[]; }
 }
 

@@ -7,7 +7,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="股票記帳">
 <meta name="theme-color" content="#0a0f1e">
-<link rel="manifest" href="manifest.json">
 <title>股票記帳本 Pro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -40,7 +39,6 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden;}
 
-/* ── Layout ── */
 .app{display:flex;flex-direction:column;height:100%;height:100dvh;}
 .status-bar{height:var(--safe-t);background:var(--bg);flex-shrink:0;}
 .header{padding:14px 16px 10px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-bottom:1px solid var(--border);}
@@ -52,7 +50,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .nav-btn.active{color:var(--blue);background:rgba(96,165,250,0.10);}
 .nav-icon{font-size:18px;line-height:1;}
 
-/* ── Auth ── */
+/* Auth */
 .auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;z-index:100;}
 .auth-logo{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--blue);margin-bottom:4px;}
 .auth-sub{font-size:12px;color:var(--text3);margin-bottom:36px;letter-spacing:2px;}
@@ -64,7 +62,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .field input:focus{border-color:var(--blue);}
 .auth-err{font-size:12px;color:var(--dn);text-align:center;margin-bottom:10px;min-height:16px;}
 
-/* ── Cards ── */
+/* Cards */
 .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
 .sum-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;}
 .sum-card.full{grid-column:1/-1;}
@@ -75,7 +73,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .sum-val.neu{color:var(--text);}
 .sum-pct{font-size:11px;color:var(--text2);margin-top:2px;font-family:var(--mono);}
 
-/* ── Holdings list ── */
+/* Holdings */
 .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .section-title{font-size:12px;color:var(--text3);font-family:var(--mono);letter-spacing:1px;}
 .trade-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px;position:relative;overflow:hidden;}
@@ -86,7 +84,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .trade-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
 .trade-ticker{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--text);}
 .trade-name{font-size:10px;color:var(--text3);margin-top:1px;}
-.trade-mkt{font-size:9px;padding:2px 6px;border-radius:4px;background:var(--bg3);color:var(--text2);font-family:var(--mono);}
 .trade-pnl{text-align:right;}
 .trade-pnl-val{font-family:var(--mono);font-size:15px;font-weight:700;}
 .trade-pnl-pct{font-family:var(--mono);font-size:11px;margin-top:1px;}
@@ -94,25 +91,25 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .trade-cell{background:var(--bg3);border-radius:6px;padding:6px 8px;}
 .trade-cell-label{font-size:9px;color:var(--text3);font-family:var(--mono);}
 .trade-cell-val{font-size:12px;font-family:var(--mono);margin-top:2px;}
-.trade-actions{display:flex;gap:6px;margin-top:8px;}
+.trade-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
 .badge{font-size:9px;padding:2px 7px;border-radius:20px;font-family:var(--mono);}
 .badge-hold{background:rgba(96,165,250,0.15);color:var(--blue);}
 .badge-sold{background:rgba(122,153,192,0.15);color:var(--text3);}
-.alert-badge{font-size:9px;padding:2px 7px;border-radius:20px;}
+.alert-badge{font-size:9px;padding:2px 7px;border-radius:20px;margin-right:4px;margin-top:2px;display:inline-block;}
 .alert-sl{background:var(--dn2);color:var(--dn);}
 .alert-tp{background:var(--up2);color:var(--up);}
 
-/* ── Buttons ── */
+/* Buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--r-sm);border:none;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:500;transition:all .15s;white-space:nowrap;}
 .btn-primary{background:var(--blue);color:#0a0f1e;}
 .btn-primary:hover{filter:brightness(1.1);}
 .btn-secondary{background:var(--bg3);color:var(--text2);border:1px solid var(--border);}
-.btn-danger{background:var(--dn2);color:var(--dn);}
+.btn-danger{background:var(--dn2);color:var(--dn);border:1px solid rgba(255,77,109,0.2);}
 .btn-sm{padding:5px 10px;font-size:11px;}
 .btn-full{width:100%;}
 .btn-gold{background:rgba(251,191,36,0.15);color:var(--gold);}
 
-/* ── Form modal ── */
+/* Modal */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:50;display:flex;align-items:flex-end;justify-content:center;}
 .modal{width:100%;max-width:480px;background:var(--bg2);border-radius:var(--r) var(--r) 0 0;padding:20px;padding-bottom:calc(20px + var(--safe-b));max-height:90dvh;overflow-y:auto;}
 .modal-title{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
@@ -126,22 +123,20 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .form-field select option{background:var(--bg2);}
 .price-lookup{display:flex;gap:6px;}
 .price-lookup input{flex:1;}
-.hint{font-size:10px;color:var(--text3);margin-top:4px;}
 
-/* ── Fee breakdown ── */
+/* Fee box */
 .fee-box{background:var(--bg3);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:12px;font-size:11px;}
 .fee-row{display:flex;justify-content:space-between;color:var(--text2);margin-bottom:3px;}
 .fee-row.total{color:var(--text);font-weight:700;border-top:1px solid var(--border);padding-top:6px;margin-top:6px;}
-.fee-row.total span:last-child{font-family:var(--mono);}
 
-/* ── Rules / Alerts tab ── */
+/* Rules */
 .rule-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:8px;}
 .rule-title{font-size:13px;font-weight:600;margin-bottom:10px;color:var(--text);}
 .rule-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .rule-field label{font-size:10px;color:var(--text3);display:block;margin-bottom:4px;font-family:var(--mono);}
 .rule-field input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:7px 9px;color:var(--text);font-size:13px;font-family:var(--mono);outline:none;}
 
-/* ── History ── */
+/* History */
 .hist-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px;}
 .hist-left{flex:1;}
 .hist-ticker{font-family:var(--mono);font-weight:700;}
@@ -149,19 +144,18 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .hist-right{text-align:right;}
 .hist-pnl{font-family:var(--mono);font-weight:700;}
 
-/* ── Export tab ── */
+/* Export */
 .export-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;}
 .export-title{font-size:13px;font-weight:600;margin-bottom:6px;}
 .export-desc{font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.5;}
 
-/* ── Tabs ── */
+/* Tabs */
 .tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
 .tab{padding:6px 14px;border-radius:20px;font-size:12px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;white-space:nowrap;font-family:var(--sans);transition:all .15s;}
 .tab.active{background:var(--blue);color:#0a0f1e;border-color:var(--blue);font-weight:600;}
 
-/* ── Misc ── */
-.divider{height:1px;background:var(--border);margin:12px 0;}
+/* Misc */
 .empty{text-align:center;padding:40px 20px;color:var(--text3);font-size:13px;}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -170,15 +164,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 .tag-us{background:rgba(167,139,250,0.15);color:var(--purple);}
 .tag-etf{background:rgba(34,211,238,0.15);color:var(--cyan);}
 .tag-usetf{background:rgba(251,191,36,0.15);color:var(--gold);}
-.loading-bar{height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);animation:loading 1s ease-in-out infinite;}
-@keyframes loading{0%{background-position:-200px 0}100%{background-position:200px 0}}
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <div class="status-bar"></div>
 
-  <!-- Auth Screen -->
+  <!-- Auth -->
   <div class="auth-screen" id="auth-screen">
     <div class="auth-logo">📈 STOCK PRO</div>
     <div class="auth-sub">PORTFOLIO TRACKER</div>
@@ -200,13 +192,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
         <a href="#" onclick="toggleAuthMode()" style="font-size:12px;color:var(--text3);text-decoration:none;" id="auth-toggle-link">還沒有帳號？點此註冊</a>
       </div>
     </div>
-    <div style="margin-top:16px;font-size:10px;color:var(--text3);text-align:center;">
-      資料加密儲存於雲端 · 多裝置同步
-    </div>
+    <div style="margin-top:16px;font-size:10px;color:var(--text3);text-align:center;">資料加密儲存於雲端 · 多裝置同步</div>
   </div>
 
-  <!-- Main App -->
-  <div id="main-app" style="display:none;flex:1;overflow:hidden;display:none;flex-direction:column;">
+  <!-- Main -->
+  <div id="main-app" style="display:none;flex:1;overflow:hidden;flex-direction:column;">
     <div class="header">
       <div>
         <div class="header-title">STOCK PRO</div>
@@ -217,25 +207,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
         <button class="btn btn-secondary btn-sm" onclick="doLogout()">登出</button>
       </div>
     </div>
-
     <div class="main" id="page-content"></div>
-
     <nav class="nav">
-      <button class="nav-btn active" onclick="setPage('dashboard')" id="nav-dashboard">
-        <span class="nav-icon">📊</span>總覽
-      </button>
-      <button class="nav-btn" onclick="setPage('add')" id="nav-add">
-        <span class="nav-icon">➕</span>新增
-      </button>
-      <button class="nav-btn" onclick="setPage('history')" id="nav-history">
-        <span class="nav-icon">📋</span>歷史
-      </button>
-      <button class="nav-btn" onclick="setPage('alerts')" id="nav-alerts">
-        <span class="nav-icon">🔔</span>提醒
-      </button>
-      <button class="nav-btn" onclick="setPage('export')" id="nav-export">
-        <span class="nav-icon">📤</span>匯出
-      </button>
+      <button class="nav-btn active" onclick="setPage('dashboard')" id="nav-dashboard"><span class="nav-icon">📊</span>總覽</button>
+      <button class="nav-btn" onclick="setPage('add')" id="nav-add"><span class="nav-icon">➕</span>新增</button>
+      <button class="nav-btn" onclick="setPage('history')" id="nav-history"><span class="nav-icon">📋</span>歷史</button>
+      <button class="nav-btn" onclick="setPage('alerts')" id="nav-alerts"><span class="nav-icon">🔔</span>提醒</button>
+      <button class="nav-btn" onclick="setPage('export')" id="nav-export"><span class="nav-icon">📤</span>匯出</button>
     </nav>
   </div>
 </div>
@@ -247,18 +225,17 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--s
 
 <script>
 // ══════════════════════════════════════════════
-// CONFIG
+// CONFIG — 換上你的 Supabase URL 和 anon key
 // ══════════════════════════════════════════════
 const SUPABASE_URL = 'https://mwvgecynapndsmjjtddv.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13dmdlY3luYXBuZHNtamp0ZGR2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyMTk1MjUsImV4cCI6MjA5NTc5NTUyNX0.jNV_Y3la3tqYatc7g3d2wSiI8ZYX_DlEVQhtioV7kKc';
 const PROXY = 'https://stock-proxy.lisa09210921.workers.dev/';
 
-// Fee config (國泰)
 const FEE = {
-  TW:    { buy: 0.001425, sell: 0.001425, tax: 0.003 },
-  ETF:   { buy: 0.001425, sell: 0.001425, tax: 0.001 },
-  US:    { buy: 0.0008,   sell: 0.0008,   tax_sell: 0.00000229 },
-  USETF: { buy: 3,        sell: 3,        tax_sell: 0.00000229 }, // USD flat
+  TW:    { buy:0.001425, sell:0.001425, tax:0.003 },
+  ETF:   { buy:0.001425, sell:0.001425, tax:0.001 },
+  US:    { buy:0.0008,   sell:0.0008,   tax_sell:0.00000229 },
+  USETF: { buy:3,        sell:3,        tax_sell:0.00000229 },
 };
 
 // ══════════════════════════════════════════════
@@ -266,26 +243,23 @@ const FEE = {
 // ══════════════════════════════════════════════
 let session = null;
 let trades = [];
-let rules = { global: { sl:8, tp:15, trail:5, avg:10 }, stocks:{} };
+let rules = { global:{ sl:8, tp:15, trail:5, avg:10 }, stocks:{} };
 let authMode = 'login';
 let currentPage = 'dashboard';
 let pageFilter = 'all';
 
 // ══════════════════════════════════════════════
-// SUPABASE HELPERS
+// SUPABASE
 // ══════════════════════════════════════════════
 async function sbFetch(path, opts={}) {
   const headers = {
     'apikey': SUPABASE_KEY,
     'Content-Type': 'application/json',
-    ...(session?.access_token ? {'Authorization': `Bearer ${session.access_token}`} : {}),
+    ...(session?.access_token ? {'Authorization':`Bearer ${session.access_token}`} : {}),
     ...opts.headers
   };
-  const res = await fetch(SUPABASE_URL + path, { ...opts, headers });
-  if (!res.ok) {
-    const e = await res.text();
-    throw new Error(e);
-  }
+  const res = await fetch(SUPABASE_URL + path, {...opts, headers});
+  if (!res.ok) throw new Error(await res.text());
   const ct = res.headers.get('content-type')||'';
   return ct.includes('json') ? res.json() : res.text();
 }
@@ -295,10 +269,8 @@ async function tryRestoreSession() {
   if (!s) return false;
   try {
     const old = JSON.parse(s);
-    // Refresh token
     const data = await sbFetch('/auth/v1/token?grant_type=refresh_token', {
-      method: 'POST',
-      body: JSON.stringify({ refresh_token: old.refresh_token })
+      method:'POST', body:JSON.stringify({refresh_token:old.refresh_token})
     });
     if (data.access_token) {
       session = data;
@@ -315,58 +287,53 @@ async function doAuth() {
   const pw    = document.getElementById('auth-pw').value;
   const err   = document.getElementById('auth-err');
   err.textContent = '';
-  if (!email || !pw) { err.textContent = '請填寫 Email 與密碼'; return; }
+  if (!email || !pw) { err.textContent='請填寫 Email 與密碼'; return; }
   const btnText = document.getElementById('auth-btn-text');
   btnText.innerHTML = '<span class="spinner"></span>';
   try {
-    const endpoint = authMode === 'login' ? '/auth/v1/token?grant_type=password' : '/auth/v1/signup';
-    const data = await sbFetch(endpoint, {
-      method: 'POST',
-      body: JSON.stringify({ email, password: pw })
-    });
+    const endpoint = authMode==='login' ? '/auth/v1/token?grant_type=password' : '/auth/v1/signup';
+    const data = await sbFetch(endpoint, {method:'POST', body:JSON.stringify({email, password:pw})});
     if (data.access_token) {
       session = data;
       localStorage.setItem('sb_session', JSON.stringify(data));
       await onLogin();
-    } else if (authMode === 'register') {
-      err.style.color = 'var(--up)';
-      err.textContent = '✓ 確認信已寄出，請到信箱確認後登入';
+    } else if (authMode==='register') {
+      err.style.color='var(--up)';
+      err.textContent='✓ 確認信已寄出，請到信箱確認後登入';
     } else {
-      err.style.color = 'var(--dn)';
-      err.textContent = data.error_description || '登入失敗';
+      err.style.color='var(--dn)';
+      err.textContent=data.error_description||'登入失敗';
     }
   } catch(e) {
-    err.style.color = 'var(--dn)';
-    err.textContent = e.message.includes('Invalid') ? '帳號或密碼錯誤' : e.message;
+    err.style.color='var(--dn)';
+    err.textContent=e.message.includes('Invalid')?'帳號或密碼錯誤':e.message;
   }
-  btnText.textContent = authMode === 'login' ? '登入' : '註冊';
+  btnText.textContent = authMode==='login' ? '登入' : '註冊';
 }
 
 async function doLogout() {
-  try { await sbFetch('/auth/v1/logout', { method: 'POST' }); } catch(e) {}
-  session = null;
-  trades = [];
+  try { await sbFetch('/auth/v1/logout',{method:'POST'}); } catch(e) {}
+  session=null; trades=[];
   localStorage.removeItem('sb_session');
-  document.getElementById('auth-screen').style.display = 'flex';
-  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('auth-screen').style.display='flex';
+  document.getElementById('main-app').style.display='none';
 }
 
 function toggleAuthMode() {
-  authMode = authMode === 'login' ? 'register' : 'login';
-  document.getElementById('auth-mode-title').textContent = authMode === 'login' ? '登入帳號' : '建立帳號';
-  document.getElementById('auth-btn-text').textContent   = authMode === 'login' ? '登入' : '註冊';
-  document.getElementById('auth-toggle-link').textContent = authMode === 'login' ? '還沒有帳號？點此註冊' : '已有帳號？點此登入';
+  authMode = authMode==='login' ? 'register' : 'login';
+  document.getElementById('auth-mode-title').textContent = authMode==='login'?'登入帳號':'建立帳號';
+  document.getElementById('auth-btn-text').textContent   = authMode==='login'?'登入':'註冊';
+  document.getElementById('auth-toggle-link').textContent= authMode==='login'?'還沒有帳號？點此註冊':'已有帳號？點此登入';
 }
 
 // ══════════════════════════════════════════════
 // DATA
 // ══════════════════════════════════════════════
 async function onLogin() {
-  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display='none';
   const mainApp = document.getElementById('main-app');
-  mainApp.style.display = 'flex';
-  const email = session.user?.email || '';
-  document.getElementById('header-user').textContent = email;
+  mainApp.style.display='flex';
+  document.getElementById('header-user').textContent = session.user?.email||'';
   await loadTrades();
   await loadRules();
   renderPage();
@@ -374,36 +341,32 @@ async function onLogin() {
 
 async function loadTrades() {
   try {
-    const data = await sbFetch('/rest/v1/trades?select=*&order=created_at.desc', {
-      headers: { 'Prefer': 'return=representation' }
-    });
+    const data = await sbFetch('/rest/v1/trades?select=*&order=created_at.desc');
     trades = Array.isArray(data) ? data : [];
-  } catch(e) { trades = []; }
+  } catch(e) { trades=[]; }
 }
 
 async function saveTrade(t) {
-  const uid = session.user.id;
-  const body = { ...t, user_id: uid };
+  const body = {...t, user_id:session.user.id};
   delete body.id;
   const data = await sbFetch('/rest/v1/trades', {
-    method: 'POST',
-    headers: { 'Prefer': 'return=representation' },
-    body: JSON.stringify(body)
+    method:'POST',
+    headers:{'Prefer':'return=representation'},
+    body:JSON.stringify(body)
   });
   return Array.isArray(data) ? data[0] : data;
 }
 
 async function updateTrade(id, patch) {
   await sbFetch(`/rest/v1/trades?id=eq.${id}`, {
-    method: 'PATCH',
-    headers: { 'Prefer': 'return=minimal' },
-    body: JSON.stringify(patch)
+    method:'PATCH',
+    headers:{'Prefer':'return=minimal'},
+    body:JSON.stringify(patch)
   });
 }
 
 async function deleteTrade(id) {
-  if (!confirm('確定刪除這筆交易？')) return;
-  await sbFetch(`/rest/v1/trades?id=eq.${id}`, { method: 'DELETE' });
+  await sbFetch(`/rest/v1/trades?id=eq.${id}`, {method:'DELETE'});
   trades = trades.filter(t => t.id !== id);
   renderPage();
 }
@@ -413,15 +376,15 @@ async function loadRules() {
     const data = await sbFetch('/rest/v1/rules?select=*');
     if (Array.isArray(data)) {
       data.forEach(r => {
-        if (r.ticker === '__global__') rules.global = { sl: +r.sl, tp: +r.tp, trail: +r.trail, avg: +r.avg_down };
-        else rules.stocks[r.ticker] = { sl: +r.sl, tp: +r.tp, trail: +r.trail, avg: +r.avg_down };
+        if (r.ticker==='__global__') rules.global={sl:+r.sl,tp:+r.tp,trail:+r.trail,avg:+r.avg_down};
+        else rules.stocks[r.ticker]={sl:+r.sl,tp:+r.tp,trail:+r.trail,avg:+r.avg_down};
       });
     }
   } catch(e) {}
 }
 
 // ══════════════════════════════════════════════
-// PRICE LOOKUP
+// PRICE
 // ══════════════════════════════════════════════
 const TW_NAMES = {
   '2330':'台積電','2317':'鴻海','2454':'聯發科','2412':'中華電','2308':'台達電',
@@ -433,24 +396,18 @@ const TW_NAMES = {
   '0050':'元大台灣50','0056':'元大高股息','00878':'國泰永續高股息','00919':'群益台灣精選高息',
   '00929':'復華台灣科技優息','00713':'元大台灣高息低波','006208':'富邦台50','00646':'元大S&P500',
   'AAPL':'Apple','MSFT':'Microsoft','NVDA':'NVIDIA','GOOGL':'Alphabet','AMZN':'Amazon',
-  'META':'Meta','TSLA':'Tesla','BRK.B':'Berkshire B','JPM':'JPMorgan','V':'Visa',
+  'META':'Meta','TSLA':'Tesla','JPM':'JPMorgan','V':'Visa','BRK.B':'Berkshire B',
   'SPY':'S&P 500 ETF','QQQ':'Nasdaq 100 ETF','VOO':'Vanguard S&P 500','VTI':'Vanguard Total Market',
   'SCHD':'Schwab Dividend ETF',
 };
 
-function getYFSym(ticker, mkt) {
-  if (mkt === 'TW' || mkt === 'ETF') return ticker + '.TW';
-  return ticker;
-}
-
 async function fetchPrice(ticker, mkt) {
-  const sym = getYFSym(ticker, mkt);
+  const sym = (mkt==='TW'||mkt==='ETF') ? ticker+'.TW' : ticker;
   try {
     const url = `${PROXY}https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1d&range=1d`;
     const res = await fetch(url);
     const data = await res.json();
-    const meta = data?.chart?.result?.[0]?.meta;
-    return meta?.regularMarketPrice ?? null;
+    return data?.chart?.result?.[0]?.meta?.regularMarketPrice ?? null;
   } catch(e) { return null; }
 }
 
@@ -460,16 +417,9 @@ async function lookupStock() {
   if (!ticker) return;
   const btn = document.getElementById('lookup-btn');
   if (btn) { btn.disabled=true; btn.innerHTML='<span class="spinner"></span>'; }
-
-  // Name
-  const name = TW_NAMES[ticker] || ticker;
-  if (document.getElementById('f-name')) document.getElementById('f-name').value = name;
-
-  // Price
+  if (document.getElementById('f-name')) document.getElementById('f-name').value = TW_NAMES[ticker]||ticker;
   const price = await fetchPrice(ticker, mkt);
-  if (price && document.getElementById('f-curprice')) {
-    document.getElementById('f-curprice').value = price.toFixed(2);
-  }
+  if (price && document.getElementById('f-curprice')) document.getElementById('f-curprice').value = price.toFixed(2);
   if (btn) { btn.disabled=false; btn.textContent='查詢'; }
   calcFee();
 }
@@ -480,173 +430,191 @@ async function refreshAllPrices() {
   const holding = trades.filter(t => !t.selldate);
   for (const t of holding) {
     const price = await fetchPrice(t.ticker, t.market);
-    if (price) {
-      t.curprice = price;
-      await updateTrade(t.id, { curprice: price });
-    }
+    if (price) { t.curprice=price; await updateTrade(t.id,{curprice:price}); }
   }
   if (btn) { btn.disabled=false; btn.innerHTML='⟳ 更新'; }
   renderPage();
 }
 
 // ══════════════════════════════════════════════
-// CALCULATIONS
+// CALC
 // ══════════════════════════════════════════════
 function calcFees(mkt, shares, price, isSell) {
-  const cfg = FEE[mkt] || FEE.TW;
+  const cfg = FEE[mkt]||FEE.TW;
   let commission, tax;
-  if (mkt === 'US' || mkt === 'USETF') {
-    commission = mkt === 'USETF' ? cfg.buy : shares * price * (isSell ? cfg.sell : cfg.buy);
-    tax = isSell ? shares * price * cfg.tax_sell : 0;
+  if (mkt==='US'||mkt==='USETF') {
+    commission = mkt==='USETF' ? cfg.buy : shares*price*(isSell?cfg.sell:cfg.buy);
+    tax = isSell ? shares*price*cfg.tax_sell : 0;
   } else {
-    const amt = shares * price;
-    commission = Math.max(1, Math.round(amt * (isSell ? cfg.sell : cfg.buy)));
-    tax = isSell ? Math.round(amt * cfg.tax) : 0;
+    const amt = shares*price;
+    commission = Math.max(1, Math.round(amt*(isSell?cfg.sell:cfg.buy)));
+    tax = isSell ? Math.round(amt*cfg.tax) : 0;
   }
-  return { commission, tax, total: commission + tax };
+  return {commission, tax, total:commission+tax};
 }
 
 function calcCost(t) {
-  const base = t.shares * t.buyprice;
-  const fee  = calcFees(t.market, t.shares, t.buyprice, false);
-  return base + fee.total;
+  return t.shares*t.buyprice + calcFees(t.market,t.shares,t.buyprice,false).total;
 }
-
-function calcSellAmt(t) {
-  const sell = t.sellprice || t.curprice || t.buyprice;
-  const base = t.shares * sell;
-  const fee  = calcFees(t.market, t.shares, sell, true);
-  return base - fee.total;
-}
-
 function calcMV(t) {
-  const p = t.curprice || t.buyprice;
-  return t.shares * p;
+  return t.shares*(t.curprice||t.buyprice);
 }
-
 function calcPnL(t) {
   if (t.selldate && t.sellprice) {
-    return calcSellAmt(t) - calcCost(t);
+    const sf = calcFees(t.market,t.shares,t.sellprice,true).total;
+    return t.shares*t.sellprice - sf - calcCost(t);
   }
   return calcMV(t) - calcCost(t);
 }
-
 function calcPct(t) {
   const cost = calcCost(t);
-  return cost > 0 ? calcPnL(t) / cost : 0;
+  return cost>0 ? calcPnL(t)/cost : 0;
 }
-
-function daysDiff(a, b) {
-  const ms = (b ? new Date(b) : new Date()) - new Date(a);
-  return Math.max(0, Math.floor(ms / 86400000));
+function daysDiff(a,b) {
+  return Math.max(0, Math.floor(((b?new Date(b):new Date())-new Date(a))/86400000));
 }
-
 function fmtNum(n, dec=0) {
-  if (n === null || n === undefined) return '—';
-  return n.toFixed(dec).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  if (n===null||n===undefined) return '—';
+  return n.toFixed(dec).replace(/\B(?=(\d{3})+(?!\d))/g,',');
 }
-
-function fmtPct(n) {
-  return (n >= 0 ? '+' : '') + (n*100).toFixed(2) + '%';
-}
-
-function getCcy(mkt) { return (mkt==='US'||mkt==='USETF') ? 'USD' : 'TWD'; }
-function getSym(mkt) { return (mkt==='US'||mkt==='USETF') ? '$' : 'NT$'; }
+function fmtPct(n) { return (n>=0?'+':'')+(n*100).toFixed(2)+'%'; }
+function getSym(mkt) { return (mkt==='US'||mkt==='USETF')?'$':'NT$'; }
 
 // ══════════════════════════════════════════════
 // FEE PREVIEW
 // ══════════════════════════════════════════════
 function calcFee() {
-  const mkt    = document.getElementById('f-mkt')?.value || 'TW';
-  const shares = parseFloat(document.getElementById('f-shares')?.value) || 0;
-  const bp     = parseFloat(document.getElementById('f-buyprice')?.value) || 0;
-  const sp     = parseFloat(document.getElementById('f-sellprice')?.value) || 0;
-  if (!shares || !bp) { document.getElementById('fee-preview').style.display='none'; return; }
-
-  const buyFee  = calcFees(mkt, shares, bp, false);
-  const hasSell = sp > 0;
-  const sellFee = hasSell ? calcFees(mkt, shares, sp, true) : null;
-  const sym = getSym(mkt);
-  const cost = shares * bp + buyFee.total;
-  const mv   = hasSell ? shares * sp - sellFee.total : null;
-  const pnl  = hasSell ? mv - cost : null;
-
-  let html = `
-    <div class="fee-box">
-      <div class="fee-row"><span>委託張數</span><span>${fmtNum(shares)} 股</span></div>
-      <div class="fee-row"><span>買入金額</span><span>${sym}${fmtNum(shares*bp,0)}</span></div>
-      <div class="fee-row"><span>買入手續費</span><span>${sym}${fmtNum(buyFee.commission,0)}</span></div>
-      ${buyFee.tax?`<div class="fee-row"><span>買入稅費</span><span>${sym}${fmtNum(buyFee.tax,0)}</span></div>`:''}
-      <div class="fee-row total"><span>實際成本</span><span>${sym}${fmtNum(cost,0)}</span></div>`;
-  if (hasSell && sellFee) {
-    html += `
-      <div class="fee-row" style="margin-top:8px"><span>賣出金額</span><span>${sym}${fmtNum(shares*sp,0)}</span></div>
-      <div class="fee-row"><span>賣出手續費</span><span>${sym}${fmtNum(sellFee.commission,0)}</span></div>
-      ${sellFee.tax?`<div class="fee-row"><span>賣出稅費</span><span>${sym}${fmtNum(sellFee.tax,0)}</span></div>`:''}
-      <div class="fee-row total"><span>實際損益</span><span style="color:${pnl>=0?'var(--up)':'var(--dn)'}">${sym}${fmtNum(Math.abs(pnl),0)} (${fmtPct(pnl/cost)})</span></div>`;
+  const mkt    = document.getElementById('f-mkt')?.value||'TW';
+  const shares = parseFloat(document.getElementById('f-shares')?.value)||0;
+  const bp     = parseFloat(document.getElementById('f-buyprice')?.value)||0;
+  const sp     = parseFloat(document.getElementById('f-sellprice')?.value)||0;
+  const fp     = document.getElementById('fee-preview');
+  if (!fp) return;
+  if (!shares||!bp) { fp.style.display='none'; return; }
+  const buyFee  = calcFees(mkt,shares,bp,false);
+  const hasSell = sp>0;
+  const sellFee = hasSell ? calcFees(mkt,shares,sp,true) : null;
+  const sym  = getSym(mkt);
+  const cost = shares*bp + buyFee.total;
+  const mv   = hasSell ? shares*sp - sellFee.total : null;
+  const pnl  = hasSell ? mv-cost : null;
+  let html = `<div class="fee-box">
+    <div class="fee-row"><span>股數</span><span>${fmtNum(shares)} 股</span></div>
+    <div class="fee-row"><span>買入金額</span><span>${sym}${fmtNum(shares*bp,0)}</span></div>
+    <div class="fee-row"><span>買入手續費</span><span>${sym}${fmtNum(buyFee.commission,0)}</span></div>
+    ${buyFee.tax?`<div class="fee-row"><span>買入稅費</span><span>${sym}${fmtNum(buyFee.tax,0)}</span></div>`:''}
+    <div class="fee-row total"><span>實際成本</span><span>${sym}${fmtNum(cost,0)}</span></div>`;
+  if (hasSell&&sellFee) {
+    html+=`<div class="fee-row" style="margin-top:8px"><span>賣出金額</span><span>${sym}${fmtNum(shares*sp,0)}</span></div>
+    <div class="fee-row"><span>賣出手續費</span><span>${sym}${fmtNum(sellFee.commission,0)}</span></div>
+    ${sellFee.tax?`<div class="fee-row"><span>賣出稅費</span><span>${sym}${fmtNum(sellFee.tax,0)}</span></div>`:''}
+    <div class="fee-row total"><span>實際損益</span><span style="color:${pnl>=0?'var(--up)':'var(--dn)'}">${sym}${fmtNum(Math.abs(pnl),0)} (${fmtPct(pnl/cost)})</span></div>`;
   }
-  html += '</div>';
-  const fp = document.getElementById('fee-preview');
-  fp.innerHTML = html;
-  fp.style.display = 'block';
+  html+='</div>';
+  fp.innerHTML=html; fp.style.display='block';
 }
 
 // ══════════════════════════════════════════════
-// ALERT CHECK
+// ALERTS
 // ══════════════════════════════════════════════
-function getRule(ticker) {
-  return rules.stocks[ticker] || rules.global;
-}
-
+function getRule(ticker) { return rules.stocks[ticker]||rules.global; }
 function checkAlerts(t) {
-  const pct = calcPct(t) * 100;
+  const pct = calcPct(t)*100;
   const r   = getRule(t.ticker);
-  const alerts = [];
-  if (pct <= -r.sl) alerts.push({ type:'sl', msg:`停損 ${pct.toFixed(1)}% ≤ -${r.sl}%` });
-  if (pct >= r.tp)  alerts.push({ type:'tp', msg:`停利 ${pct.toFixed(1)}% ≥ +${r.tp}%` });
-  return alerts;
+  const out = [];
+  if (pct<=-r.sl) out.push({type:'sl',msg:`停損 ${pct.toFixed(1)}% ≤ -${r.sl}%`});
+  if (pct>=r.tp)  out.push({type:'tp',msg:`停利 ${pct.toFixed(1)}% ≥ +${r.tp}%`});
+  return out;
+}
+
+// ══════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════
+function closeModal() {
+  const m = document.getElementById('modal');
+  if (m) m.style.display='none';
+}
+
+// ══════════════════════════════════════════════
+// DELETE WITH KEY CONFIRMATION
+// ══════════════════════════════════════════════
+function openDeleteModal(id) {
+  const t = trades.find(x => x.id===id);
+  if (!t) return;
+  const KEY = t.ticker;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">⚠️ 刪除確認
+      <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer">✕</button>
+    </div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.8">
+      確定要刪除 <strong style="color:var(--text)">${t.ticker}${t.name?' · '+t.name:''}</strong> 嗎？<br>
+      請輸入股票代號 <strong style="color:var(--dn);font-family:var(--mono)">${KEY}</strong> 確認刪除
+    </div>
+    <div class="form-field">
+      <label>輸入代號確認</label>
+      <input type="text" id="delete-confirm-input" placeholder="${KEY}" style="text-transform:uppercase;letter-spacing:2px;font-family:var(--mono);">
+    </div>
+    <div id="delete-err" style="font-size:12px;color:var(--dn);min-height:18px;margin-bottom:8px"></div>
+    <button class="btn btn-danger btn-full" onclick="confirmDelete(${id},'${KEY}')">確認刪除</button>`;
+  document.getElementById('modal').style.display='flex';
+  setTimeout(()=>document.getElementById('delete-confirm-input')?.focus(),100);
+  document.getElementById('delete-confirm-input').addEventListener('keydown', e=>{
+    if(e.key==='Enter') confirmDelete(id,KEY);
+  });
+}
+
+async function confirmDelete(id, key) {
+  const input = (document.getElementById('delete-confirm-input')?.value||'').toUpperCase().trim();
+  if (input!==key) {
+    document.getElementById('delete-err').textContent=`❌ 代號錯誤，請輸入 ${key}`;
+    return;
+  }
+  try {
+    await deleteTrade(id);
+    closeModal();
+  } catch(e) {
+    document.getElementById('delete-err').textContent='刪除失敗：'+e.message;
+  }
 }
 
 // ══════════════════════════════════════════════
 // PAGES
 // ══════════════════════════════════════════════
 function setPage(p) {
-  currentPage = p;
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('nav-' + p)?.classList.add('active');
-  pageFilter = 'all';
+  currentPage=p;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('nav-'+p)?.classList.add('active');
+  pageFilter='all';
   renderPage();
 }
 
 function renderPage() {
   const c = document.getElementById('page-content');
-  if (currentPage === 'dashboard') c.innerHTML = renderDashboard();
-  else if (currentPage === 'add')   c.innerHTML = renderAddPage();
-  else if (currentPage === 'history') c.innerHTML = renderHistory();
-  else if (currentPage === 'alerts')  c.innerHTML = renderAlerts();
-  else if (currentPage === 'export')  c.innerHTML = renderExport();
+  if (!c) return;
+  if (currentPage==='dashboard') c.innerHTML=renderDashboard();
+  else if (currentPage==='add')      c.innerHTML=renderAddPage();
+  else if (currentPage==='history')  c.innerHTML=renderHistory();
+  else if (currentPage==='alerts')   c.innerHTML=renderAlerts();
+  else if (currentPage==='export')   c.innerHTML=renderExport();
 }
 
 // ── Dashboard ──
 function renderDashboard() {
-  const holding = trades.filter(t => !t.selldate);
-  const sold    = trades.filter(t => t.selldate);
+  const holding = trades.filter(t=>!t.selldate);
+  const sold    = trades.filter(t=>t.selldate);
+  const totalCost = holding.reduce((s,t)=>s+calcCost(t),0);
+  const totalMV   = holding.reduce((s,t)=>s+calcMV(t),0);
+  const unrealPnL = totalMV-totalCost;
+  const unrealPct = totalCost>0 ? unrealPnL/totalCost : 0;
+  const realPnL   = sold.reduce((s,t)=>s+calcPnL(t),0);
+  const alertCount= holding.filter(t=>checkAlerts(t).length>0).length;
 
-  const totalCost = holding.reduce((s,t) => s + calcCost(t), 0);
-  const totalMV   = holding.reduce((s,t) => s + calcMV(t), 0);
-  const unrealPnL = totalMV - totalCost;
-  const unrealPct = totalCost > 0 ? unrealPnL / totalCost : 0;
-  const realPnL   = sold.reduce((s,t) => s + calcPnL(t), 0);
+  const mktLabels={all:'全部',TW:'台股',ETF:'台ETF',US:'美股',USETF:'美ETF'};
+  const filterTabs = Object.entries(mktLabels).map(([f,l])=>
+    `<button class="tab${pageFilter===f?' active':''}" onclick="pageFilter='${f}';renderPage()">${l}</button>`
+  ).join('');
 
-  const alertCount = holding.filter(t => checkAlerts(t).length > 0).length;
-
-  const filterTabs = ['all','TW','ETF','US','USETF'].map(f => {
-    const labels = {all:'全部',TW:'台股',ETF:'台ETF',US:'美股',USETF:'美ETF'};
-    return `<button class="tab${pageFilter===f?' active':''}" onclick="pageFilter='${f}';renderPage()">${labels[f]}</button>`;
-  }).join('');
-
-  const filtered = pageFilter === 'all' ? holding : holding.filter(t => t.market === pageFilter);
-
+  const filtered = pageFilter==='all' ? holding : holding.filter(t=>t.market===pageFilter);
   const cards = filtered.length ? filtered.map(renderTradeCard).join('') : '<div class="empty">📭 此分類無持倉</div>';
 
   return `
@@ -662,7 +630,7 @@ function renderDashboard() {
       <div class="sum-card">
         <div class="sum-label">未實現損益</div>
         <div class="sum-val ${unrealPnL>=0?'up':'dn'}">${unrealPnL>=0?'+':''}NT$${fmtNum(Math.abs(unrealPnL),0)}</div>
-        <div class="sum-pct ${unrealPnL>=0?'':''}">${fmtPct(unrealPct)}</div>
+        <div class="sum-pct">${fmtPct(unrealPct)}</div>
       </div>
       <div class="sum-card">
         <div class="sum-label">已實現損益</div>
@@ -685,22 +653,19 @@ function renderTradeCard(t) {
   const pnl = calcPnL(t);
   const pct = calcPct(t);
   const sym = getSym(t.market);
-  const ccy = getCcy(t.market);
-  const cls = pnl >= 0 ? 'up-card' : 'dn-card';
+  const cls = pnl>=0?'up-card':'dn-card';
   const alerts = checkAlerts(t);
-  const alertBadges = alerts.map(a =>
-    `<span class="alert-badge alert-${a.type}">${a.msg}</span>`
-  ).join('');
-  const mktLabel = {TW:'台股',ETF:'台ETF',US:'美股',USETF:'美ETF'};
-  const tagCls   = {TW:'tag-tw',ETF:'tag-etf',US:'tag-us',USETF:'tag-usetf'};
-
+  const alertBadges = alerts.map(a=>`<span class="alert-badge alert-${a.type}">${a.msg}</span>`).join('');
+  const tagCls={TW:'tag-tw',ETF:'tag-etf',US:'tag-us',USETF:'tag-usetf'};
+  const mktLabel={TW:'台股',ETF:'台ETF',US:'美股',USETF:'美ETF'};
+  const ccy=(t.market==='US'||t.market==='USETF')?'USD':'TWD';
   return `
   <div class="trade-card ${cls}">
     <div class="trade-top">
       <div>
-        <div class="trade-ticker">${t.ticker} <span class="tag ${tagCls[t.market]}">${mktLabel[t.market]||t.market}</span></div>
+        <div class="trade-ticker">${t.ticker} <span class="tag ${tagCls[t.market]||'tag-tw'}">${mktLabel[t.market]||t.market}</span></div>
         <div class="trade-name">${t.name||''}</div>
-        ${alertBadges}
+        <div style="margin-top:4px">${alertBadges}</div>
       </div>
       <div class="trade-pnl">
         <div class="trade-pnl-val" style="color:${pnl>=0?'var(--up)':'var(--dn)'}">${pnl>=0?'+':''}${sym}${fmtNum(Math.abs(pnl),0)}</div>
@@ -708,48 +673,27 @@ function renderTradeCard(t) {
       </div>
     </div>
     <div class="trade-grid">
-      <div class="trade-cell">
-        <div class="trade-cell-label">買入價</div>
-        <div class="trade-cell-val">${sym}${fmtNum(t.buyprice,2)}</div>
-      </div>
-      <div class="trade-cell">
-        <div class="trade-cell-label">現價</div>
-        <div class="trade-cell-val">${sym}${fmtNum(t.curprice,2)} <span style="font-size:9px;color:var(--text3)">${ccy}</span></div>
-      </div>
-      <div class="trade-cell">
-        <div class="trade-cell-label">股數</div>
-        <div class="trade-cell-val">${fmtNum(t.shares,0)}</div>
-      </div>
-      <div class="trade-cell">
-        <div class="trade-cell-label">成本</div>
-        <div class="trade-cell-val">${sym}${fmtNum(calcCost(t),0)}</div>
-      </div>
-      <div class="trade-cell">
-        <div class="trade-cell-label">市值</div>
-        <div class="trade-cell-val">${sym}${fmtNum(calcMV(t),0)}</div>
-      </div>
-      <div class="trade-cell">
-        <div class="trade-cell-label">持有天數</div>
-        <div class="trade-cell-val">${daysDiff(t.buydate)} 天</div>
-      </div>
+      <div class="trade-cell"><div class="trade-cell-label">買入價</div><div class="trade-cell-val">${sym}${fmtNum(t.buyprice,2)}</div></div>
+      <div class="trade-cell"><div class="trade-cell-label">現價</div><div class="trade-cell-val">${sym}${fmtNum(t.curprice,2)} <span style="font-size:9px;color:var(--text3)">${ccy}</span></div></div>
+      <div class="trade-cell"><div class="trade-cell-label">股數</div><div class="trade-cell-val">${fmtNum(t.shares,0)}</div></div>
+      <div class="trade-cell"><div class="trade-cell-label">成本</div><div class="trade-cell-val">${sym}${fmtNum(calcCost(t),0)}</div></div>
+      <div class="trade-cell"><div class="trade-cell-label">市值</div><div class="trade-cell-val">${sym}${fmtNum(calcMV(t),0)}</div></div>
+      <div class="trade-cell"><div class="trade-cell-label">持有天數</div><div class="trade-cell-val">${daysDiff(t.buydate)} 天</div></div>
     </div>
     <div class="trade-actions">
       <button class="btn btn-secondary btn-sm" onclick="openSellModal(${t.id})">賣出</button>
       <button class="btn btn-secondary btn-sm" onclick="openEditPrice(${t.id})">更新價格</button>
-      <button class="btn btn-danger btn-sm" onclick="deleteTrade(${t.id})">刪除</button>
+      <button class="btn btn-danger btn-sm" onclick="openDeleteModal(${t.id})">🗑 刪除</button>
     </div>
   </div>`;
 }
 
-// ── Add Page ──
+// ── Add ──
 function renderAddPage() {
   const today = new Date().toISOString().slice(0,10);
   return `
     <div style="max-width:480px;margin:0 auto;">
-    <div class="section-head" style="margin-bottom:16px;">
-      <div class="section-title">NEW TRADE</div>
-    </div>
-
+    <div class="section-title" style="margin-bottom:16px">NEW TRADE</div>
     <div class="form-row">
       <div class="form-field">
         <label>市場</label>
@@ -768,23 +712,20 @@ function renderAddPage() {
         </div>
       </div>
     </div>
-
     <div class="form-field">
       <label>股票名稱</label>
       <input type="text" id="f-name" placeholder="自動帶入或手動輸入">
     </div>
-
     <div class="form-row">
       <div class="form-field">
         <label>買入日期</label>
         <input type="date" id="f-buydate" value="${today}">
       </div>
       <div class="form-field">
-        <label>股數 / 張數</label>
+        <label>股數</label>
         <input type="number" id="f-shares" placeholder="1000" oninput="calcFee()">
       </div>
     </div>
-
     <div class="form-row">
       <div class="form-field">
         <label>買入價格</label>
@@ -795,14 +736,11 @@ function renderAddPage() {
         <input type="number" id="f-curprice" placeholder="自動查詢" step="0.01">
       </div>
     </div>
-
     <div class="form-field">
       <label>備註</label>
       <input type="text" id="f-note" placeholder="選填">
     </div>
-
     <div id="fee-preview" style="display:none"></div>
-
     <button class="btn btn-primary btn-full" onclick="addTrade()" style="margin-bottom:8px">✓ 新增交易</button>
     <div style="height:20px"></div>
     </div>`;
@@ -810,30 +748,32 @@ function renderAddPage() {
 
 async function addTrade() {
   const ticker  = (document.getElementById('f-ticker')?.value||'').toUpperCase().trim();
-  const mkt     = document.getElementById('f-mkt')?.value || 'TW';
+  const mkt     = document.getElementById('f-mkt')?.value||'TW';
   const shares  = parseFloat(document.getElementById('f-shares')?.value);
   const bp      = parseFloat(document.getElementById('f-buyprice')?.value);
   const buydate = document.getElementById('f-buydate')?.value;
-  if (!ticker || !shares || !bp || !buydate) { alert('請填寫必要欄位'); return; }
-  const curprice = parseFloat(document.getElementById('f-curprice')?.value) || bp;
-  const name     = document.getElementById('f-name')?.value || TW_NAMES[ticker] || ticker;
-  const note     = document.getElementById('f-note')?.value || '';
+  if (!ticker||!shares||!bp||!buydate) { alert('請填寫必要欄位'); return; }
+  const curprice = parseFloat(document.getElementById('f-curprice')?.value)||bp;
+  const name     = document.getElementById('f-name')?.value||TW_NAMES[ticker]||ticker;
+  const note     = document.getElementById('f-note')?.value||'';
   try {
-    const t = await saveTrade({ ticker, market:mkt, name, shares, buyprice:bp, curprice, buydate, note });
+    const t = await saveTrade({ticker,market:mkt,name,shares,buyprice:bp,curprice,buydate,note});
     trades.unshift(t);
     setPage('dashboard');
     alert('✓ 新增成功！');
-  } catch(e) { alert('新增失敗：' + e.message); }
+  } catch(e) { alert('新增失敗：'+e.message); }
 }
 
 // ── Sell modal ──
 function openSellModal(id) {
-  const t = trades.find(x => x.id === id);
+  const t = trades.find(x=>x.id===id);
   if (!t) return;
   const today = new Date().toISOString().slice(0,10);
   const sym = getSym(t.market);
   document.getElementById('modal-body').innerHTML = `
-    <div class="modal-title">賣出 ${t.ticker} <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer">✕</button></div>
+    <div class="modal-title">賣出 ${t.ticker}
+      <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer">✕</button>
+    </div>
     <div class="form-field">
       <label>賣出日期</label>
       <input type="date" id="m-selldate" value="${today}">
@@ -844,19 +784,19 @@ function openSellModal(id) {
     </div>
     <div id="sell-preview"></div>
     <button class="btn btn-primary btn-full" onclick="confirmSell(${id})">確認賣出</button>`;
-  document.getElementById('modal').style.display = 'flex';
+  document.getElementById('modal').style.display='flex';
 }
 
 function previewSell(id) {
-  const t  = trades.find(x => x.id === id);
+  const t  = trades.find(x=>x.id===id);
   const sp = parseFloat(document.getElementById('m-sellprice')?.value);
-  if (!t || !sp) return;
+  if (!t||!sp) return;
   const sym  = getSym(t.market);
   const cost = calcCost(t);
-  const fee  = calcFees(t.market, t.shares, sp, true);
-  const sell = t.shares * sp - fee.total;
-  const pnl  = sell - cost;
-  const pct  = pnl / cost;
+  const fee  = calcFees(t.market,t.shares,sp,true);
+  const sell = t.shares*sp - fee.total;
+  const pnl  = sell-cost;
+  const pct  = pnl/cost;
   document.getElementById('sell-preview').innerHTML = `
     <div class="fee-box">
       <div class="fee-row"><span>賣出金額</span><span>${sym}${fmtNum(t.shares*sp,0)}</span></div>
@@ -866,62 +806,60 @@ function previewSell(id) {
 }
 
 async function confirmSell(id) {
-  const t        = trades.find(x => x.id === id);
+  const t        = trades.find(x=>x.id===id);
   const selldate = document.getElementById('m-selldate')?.value;
   const sellprice= parseFloat(document.getElementById('m-sellprice')?.value);
-  if (!selldate || !sellprice) { alert('請填寫賣出日期與價格'); return; }
-  await updateTrade(id, { selldate, sellprice, curprice: sellprice });
-  const idx = trades.findIndex(x => x.id === id);
-  if (idx >= 0) { trades[idx].selldate = selldate; trades[idx].sellprice = sellprice; trades[idx].curprice = sellprice; }
+  if (!selldate||!sellprice) { alert('請填寫賣出日期與價格'); return; }
+  await updateTrade(id,{selldate,sellprice,curprice:sellprice});
+  const idx = trades.findIndex(x=>x.id===id);
+  if (idx>=0) { trades[idx].selldate=selldate; trades[idx].sellprice=sellprice; trades[idx].curprice=sellprice; }
   closeModal();
   renderPage();
 }
 
 function openEditPrice(id) {
-  const t = trades.find(x => x.id === id);
+  const t = trades.find(x=>x.id===id);
   if (!t) return;
   document.getElementById('modal-body').innerHTML = `
-    <div class="modal-title">更新現價 ${t.ticker} <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer">✕</button></div>
+    <div class="modal-title">更新現價 ${t.ticker}
+      <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer">✕</button>
+    </div>
     <div class="form-field">
       <label>現在價格</label>
       <input type="number" id="m-curprice" value="${t.curprice||''}" step="0.01">
     </div>
     <button class="btn btn-primary btn-full" onclick="savePrice(${id})">儲存</button>`;
-  document.getElementById('modal').style.display = 'flex';
+  document.getElementById('modal').style.display='flex';
 }
 
 async function savePrice(id) {
   const p = parseFloat(document.getElementById('m-curprice')?.value);
   if (!p) return;
-  await updateTrade(id, { curprice: p });
-  const idx = trades.findIndex(x => x.id === id);
-  if (idx >= 0) trades[idx].curprice = p;
+  await updateTrade(id,{curprice:p});
+  const idx = trades.findIndex(x=>x.id===id);
+  if (idx>=0) trades[idx].curprice=p;
   closeModal();
   renderPage();
 }
 
-function closeModal() { document.getElementById('modal').style.display = 'none'; }
-
 // ── History ──
 function renderHistory() {
-  const sold = trades.filter(t => t.selldate).sort((a,b) => new Date(b.selldate) - new Date(a.selldate));
+  const sold = trades.filter(t=>t.selldate).sort((a,b)=>new Date(b.selldate)-new Date(a.selldate));
   if (!sold.length) return '<div class="empty">📋 尚無已實現交易</div>';
-  const totalPnL = sold.reduce((s,t) => s + calcPnL(t), 0);
-  const sym = 'NT$';
+  const totalPnL = sold.reduce((s,t)=>s+calcPnL(t),0);
+  const tagCls={TW:'tag-tw',ETF:'tag-etf',US:'tag-us',USETF:'tag-usetf'};
   return `
     <div class="sum-card" style="margin-bottom:12px;">
       <div class="sum-label">已實現總損益</div>
-      <div class="sum-val ${totalPnL>=0?'up':'dn'}">${totalPnL>=0?'+':''}${sym}${fmtNum(Math.abs(totalPnL),0)}</div>
+      <div class="sum-val ${totalPnL>=0?'up':'dn'}">${totalPnL>=0?'+':''}NT$${fmtNum(Math.abs(totalPnL),0)}</div>
     </div>
     <div class="section-title" style="margin-bottom:8px">CLOSED TRADES · ${sold.length}</div>
-    ${sold.map(t => {
-      const pnl = calcPnL(t);
-      const pct = calcPct(t);
-      const sy  = getSym(t.market);
+    ${sold.map(t=>{
+      const pnl=calcPnL(t); const pct=calcPct(t); const sy=getSym(t.market);
       return `<div class="hist-row">
         <div class="hist-left">
-          <div class="hist-ticker">${t.ticker} <span class="tag ${({TW:'tag-tw',ETF:'tag-etf',US:'tag-us',USETF:'tag-usetf'})[t.market]}">${t.market}</span></div>
-          <div class="hist-meta">${t.buydate} → ${t.selldate} · ${daysDiff(t.buydate, t.selldate)}天</div>
+          <div class="hist-ticker">${t.ticker} <span class="tag ${tagCls[t.market]||'tag-tw'}">${t.market}</span></div>
+          <div class="hist-meta">${t.buydate} → ${t.selldate} · ${daysDiff(t.buydate,t.selldate)}天</div>
         </div>
         <div class="hist-right">
           <div class="hist-pnl" style="color:${pnl>=0?'var(--up)':'var(--dn)'}">${pnl>=0?'+':''}${sy}${fmtNum(Math.abs(pnl),0)}</div>
@@ -934,8 +872,8 @@ function renderHistory() {
 
 // ── Alerts ──
 function renderAlerts() {
-  const holding = trades.filter(t => !t.selldate);
-  const triggered = holding.filter(t => checkAlerts(t).length > 0);
+  const holding  = trades.filter(t=>!t.selldate);
+  const triggered= holding.filter(t=>checkAlerts(t).length>0);
   return `
     <div class="section-title" style="margin-bottom:10px">ALERT RULES</div>
     <div class="rule-card">
@@ -948,10 +886,9 @@ function renderAlerts() {
       </div>
       <button class="btn btn-primary btn-sm" style="margin-top:8px" onclick="saveGlobalRule()">儲存</button>
     </div>
-
     <div class="section-title" style="margin:12px 0 8px">TRIGGERED · ${triggered.length}</div>
-    ${triggered.length ? triggered.map(t => {
-      const alerts = checkAlerts(t);
+    ${triggered.length ? triggered.map(t=>{
+      const alerts=checkAlerts(t);
       return `<div class="trade-card ${calcPnL(t)>=0?'up-card':'dn-card'}">
         <div class="trade-top">
           <div><div class="trade-ticker">${t.ticker}</div><div class="trade-name">${t.name||''}</div></div>
@@ -967,100 +904,101 @@ async function saveGlobalRule() {
   const tp    = parseFloat(document.getElementById('r-tp')?.value)||15;
   const trail = parseFloat(document.getElementById('r-trail')?.value)||5;
   const avg   = parseFloat(document.getElementById('r-avg')?.value)||10;
-  rules.global = { sl, tp, trail, avg };
+  rules.global={sl,tp,trail,avg};
   try {
-    const uid = session.user.id;
     await sbFetch('/rest/v1/rules', {
-      method: 'POST',
-      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-      body: JSON.stringify({ user_id: uid, ticker: '__global__', sl, tp, trail, avg_down: avg })
+      method:'POST',
+      headers:{'Prefer':'resolution=merge-duplicates,return=minimal'},
+      body:JSON.stringify({user_id:session.user.id,ticker:'__global__',sl,tp,trail,avg_down:avg})
     });
     alert('✓ 規則已儲存');
-  } catch(e) { alert('儲存失敗：' + e.message); }
+  } catch(e) { alert('儲存失敗：'+e.message); }
 }
 
 // ── Export ──
 function renderExport() {
   return `
     <div class="section-title" style="margin-bottom:10px">EXPORT</div>
-
     <div class="export-card">
       <div class="export-title">📊 匯出 CSV（Excel 可開啟）</div>
-      <div class="export-desc">匯出所有交易紀錄，包含：市場、代號、股數、買賣日期、買賣價格、手續費、實際損益、報酬率、持有天數</div>
+      <div class="export-desc">包含：市場、代號、股數、買賣日期、買賣價格、手續費、實際損益、報酬率、持有天數</div>
       <button class="btn btn-primary" onclick="exportCSV()">下載 CSV</button>
     </div>
-
     <div class="export-card">
       <div class="export-title">📋 損益摘要</div>
       <div class="export-desc">持倉市值、未實現/已實現損益、手續費支出總計</div>
       <button class="btn btn-gold" onclick="showSummaryModal()">查看摘要</button>
     </div>
-
     <div style="height:20px"></div>`;
 }
 
 function exportCSV() {
   const BOM = '\uFEFF';
-  const headers = '市場,代號,名稱,買入日,賣出日,股數,買入價,賣出價,現價,買入手續費,賣出手續費,實際成本,實際收入,損益,報酬率%,持有天數,狀態\n';
-  const rows = trades.map(t => {
-    const buyFee  = calcFees(t.market, t.shares, t.buyprice, false);
-    const cost    = t.shares * t.buyprice + buyFee.total;
-    const sellFee = t.sellprice ? calcFees(t.market, t.shares, t.sellprice, true) : null;
-    const sellAmt = t.sellprice ? t.shares * t.sellprice - sellFee.total : '';
-    const pnl     = t.sellprice ? (sellAmt - cost).toFixed(0) : (calcMV(t) - cost).toFixed(0);
-    const pct     = t.sellprice ? ((sellAmt - cost)/cost*100).toFixed(2) : ((calcMV(t)-cost)/cost*100).toFixed(2);
-    const days    = daysDiff(t.buydate, t.selldate || null);
-    return [
-      t.market, t.ticker, t.name||'',
-      t.buydate, t.selldate||'',
-      t.shares, t.buyprice, t.sellprice||'', t.curprice||'',
-      buyFee.total.toFixed(0), sellFee ? sellFee.total.toFixed(0) : '',
-      cost.toFixed(0), sellAmt !== '' ? sellAmt.toFixed(0) : '',
-      pnl, pct, days,
-      t.selldate ? '已實現' : '持有中'
-    ].join(',');
+  const hdr = '市場,代號,名稱,買入日,賣出日,股數,買入價,賣出價,現價,買入手續費,賣出手續費,實際成本,實際收入,損益,報酬率%,持有天數,狀態\n';
+  const rows = trades.map(t=>{
+    const buyFee  = calcFees(t.market,t.shares,t.buyprice,false);
+    const cost    = t.shares*t.buyprice + buyFee.total;
+    const sellFee = t.sellprice ? calcFees(t.market,t.shares,t.sellprice,true) : null;
+    const sellAmt = t.sellprice ? t.shares*t.sellprice - sellFee.total : '';
+    const pnl     = t.sellprice ? (sellAmt-cost).toFixed(0) : (calcMV(t)-cost).toFixed(0);
+    const pct     = t.sellprice ? ((sellAmt-cost)/cost*100).toFixed(2) : ((calcMV(t)-cost)/cost*100).toFixed(2);
+    return [t.market,t.ticker,t.name||'',t.buydate,t.selldate||'',t.shares,t.buyprice,t.sellprice||'',t.curprice||'',
+      buyFee.total.toFixed(0),sellFee?sellFee.total.toFixed(0):'',cost.toFixed(0),
+      sellAmt!==''?sellAmt.toFixed(0):'',pnl,pct,daysDiff(t.buydate,t.selldate||null),
+      t.selldate?'已實現':'持有中'].join(',');
   }).join('\n');
-  const blob = new Blob([BOM + headers + rows], { type: 'text/csv;charset=utf-8' });
+  const blob = new Blob([BOM+hdr+rows],{type:'text/csv;charset=utf-8'});
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href = url; a.download = '股票損益記錄.csv'; a.click();
+  a.href=url; a.download='股票損益記錄.csv'; a.click();
   URL.revokeObjectURL(url);
 }
 
 function showSummaryModal() {
-  const holding  = trades.filter(t => !t.selldate);
-  const sold     = trades.filter(t => t.selldate);
-  const totalCost= holding.reduce((s,t) => s + calcCost(t), 0);
-  const totalMV  = holding.reduce((s,t) => s + calcMV(t), 0);
-  const unrealPnL= totalMV - totalCost;
-  const realPnL  = sold.reduce((s,t) => s + calcPnL(t), 0);
-  const allFees  = trades.reduce((s,t) => {
-    const bf = calcFees(t.market, t.shares, t.buyprice, false).total;
-    const sf = t.sellprice ? calcFees(t.market, t.shares, t.sellprice, true).total : 0;
-    return s + bf + sf;
-  }, 0);
-
+  const holding  = trades.filter(t=>!t.selldate);
+  const sold     = trades.filter(t=>t.selldate);
+  const totalCost= holding.reduce((s,t)=>s+calcCost(t),0);
+  const totalMV  = holding.reduce((s,t)=>s+calcMV(t),0);
+  const unrealPnL= totalMV-totalCost;
+  const realPnL  = sold.reduce((s,t)=>s+calcPnL(t),0);
+  const allFees  = trades.reduce((s,t)=>{
+    const bf=calcFees(t.market,t.shares,t.buyprice,false).total;
+    const sf=t.sellprice?calcFees(t.market,t.shares,t.sellprice,true).total:0;
+    return s+bf+sf;
+  },0);
   document.getElementById('modal-body').innerHTML = `
-    <div class="modal-title">損益摘要 <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer">✕</button></div>
+    <div class="modal-title">損益摘要
+      <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer">✕</button>
+    </div>
     <div class="fee-box">
       <div class="fee-row"><span>持倉成本</span><span>NT$${fmtNum(totalCost,0)}</span></div>
       <div class="fee-row"><span>目前市值</span><span>NT$${fmtNum(totalMV,0)}</span></div>
-      <div class="fee-row total" style="color:${unrealPnL>=0?'var(--up)':'var(--dn)'}"><span>未實現損益</span><span>${unrealPnL>=0?'+':''}NT$${fmtNum(Math.abs(unrealPnL),0)} (${fmtPct(unrealPnL/Math.max(1,totalCost))})</span></div>
-      <div class="fee-row" style="margin-top:8px"><span>已實現損益</span><span style="color:${realPnL>=0?'var(--up)':'var(--dn)'}">${realPnL>=0?'+':''}NT$${fmtNum(Math.abs(realPnL),0)}</span></div>
-      <div class="fee-row total"><span>總損益</span><span style="color:${(unrealPnL+realPnL)>=0?'var(--up)':'var(--dn)'}">${(unrealPnL+realPnL)>=0?'+':''}NT$${fmtNum(Math.abs(unrealPnL+realPnL),0)}</span></div>
-      <div class="fee-row" style="margin-top:8px"><span>已繳手續費+稅</span><span style="color:var(--dn)">-NT$${fmtNum(allFees,0)}</span></div>
+      <div class="fee-row total" style="color:${unrealPnL>=0?'var(--up)':'var(--dn)'}">
+        <span>未實現損益</span>
+        <span>${unrealPnL>=0?'+':''}NT$${fmtNum(Math.abs(unrealPnL),0)} (${fmtPct(unrealPnL/Math.max(1,totalCost))})</span>
+      </div>
+      <div class="fee-row" style="margin-top:8px"><span>已實現損益</span>
+        <span style="color:${realPnL>=0?'var(--up)':'var(--dn)'}">${realPnL>=0?'+':''}NT$${fmtNum(Math.abs(realPnL),0)}</span>
+      </div>
+      <div class="fee-row total">
+        <span>總損益</span>
+        <span style="color:${(unrealPnL+realPnL)>=0?'var(--up)':'var(--dn)'}">${(unrealPnL+realPnL)>=0?'+':''}NT$${fmtNum(Math.abs(unrealPnL+realPnL),0)}</span>
+      </div>
+      <div class="fee-row" style="margin-top:8px"><span>已繳手續費+稅</span>
+        <span style="color:var(--dn)">-NT$${fmtNum(allFees,0)}</span>
+      </div>
     </div>
     <button class="btn btn-primary btn-full" onclick="exportCSV()">下載 CSV</button>`;
-  document.getElementById('modal').style.display = 'flex';
+  document.getElementById('modal').style.display='flex';
 }
 
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
-document.getElementById('auth-pw').addEventListener('keydown', e => { if(e.key==='Enter') doAuth(); });
-document.getElementById('auth-email').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('auth-pw').focus(); });
+document.getElementById('auth-pw').addEventListener('keydown', e=>{ if(e.key==='Enter') doAuth(); });
+document.getElementById('auth-email').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('auth-pw').focus(); });
 
-(async () => {
+(async()=>{
   const ok = await tryRestoreSession();
   if (ok) await onLogin();
 })();

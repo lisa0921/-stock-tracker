@@ -370,6 +370,7 @@ async function saveTrade(t) {
     ticker:    t.ticker,
     market:    t.market,
     name:      t.name    || '',
+    type:      t.type    || 'buy',
     qty:       t.shares,       // DB 欄位名稱
     price:     t.buyprice,     // DB 欄位名稱
     date:      t.buydate,      // DB 欄位名稱

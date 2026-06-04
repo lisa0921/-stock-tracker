@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="股票記帳">
 <meta name="theme-color" content="#0a0f1e">
 <title>股票記帳本</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -364,8 +365,18 @@ async function loadTrades() {
 }
 
 async function saveTrade(t) {
-  const body = {...t, user_id:session.user.id};
-  delete body.id;
+  const body = {
+    user_id:   session.user.id,
+    ticker:    t.ticker,
+    market:    t.market,
+    name:      t.name    || '',
+    qty:       t.shares,       // DB 欄位名稱
+    price:     t.buyprice,     // DB 欄位名稱
+    date:      t.buydate,      // DB 欄位名稱
+    note:      t.note    || '',
+    ...(t.selldate  ? {selldate:  t.selldate}  : {}),
+    ...(t.sellprice ? {sellprice: t.sellprice} : {}),
+  };
   const data = await sbFetch('/rest/v1/trades', {
     method:'POST',
     headers:{'Prefer':'return=representation'},

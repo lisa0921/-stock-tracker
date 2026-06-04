@@ -345,22 +345,24 @@ async function onLogin() {
   renderPage();
 }
 
+function normalizeTrade(t) {
+  const buyprice  = t.buyprice  ?? t.price     ?? 0;
+  const shares    = t.shares    ?? t.qty       ?? 0;
+  const curprice  = t.curprice  ?? t.currPrice ?? buyprice;
+  const buydate   = t.buydate   ?? t.date      ?? '';
+  const isSell    = t.type === 'sell';
+  const selldate  = t.selldate  ?? (isSell ? buydate : null);
+  const sellprice = t.sellprice ?? (isSell ? buyprice : null);
+  return { ...t, buyprice, shares, curprice, buydate, selldate, sellprice,
+    market: t.market ?? 'TW',
+    name:   t.name   ?? t.ticker ?? '',
+  };
+}
+
 async function loadTrades() {
   try {
     const data = await sbFetch('/rest/v1/trades?select=*&order=created_at.desc');
-    trades = (Array.isArray(data) ? data : []).map(t => {
-      const buyprice  = t.buyprice  ?? t.price    ?? 0;
-      const shares    = t.shares    ?? t.qty      ?? 0;
-      const curprice  = t.curprice  ?? t.currPrice ?? buyprice;
-      const buydate   = t.buydate   ?? t.date     ?? '';
-      const isSell    = t.type === 'sell';
-      const selldate  = t.selldate  ?? (isSell ? buydate : null);
-      const sellprice = t.sellprice ?? (isSell ? buyprice : null);
-      return { ...t, buyprice, shares, curprice, buydate, selldate, sellprice,
-        market: t.market ?? 'TW',
-        name:   t.name   ?? t.ticker ?? '',
-      };
-    });
+    trades = (Array.isArray(data) ? data : []).map(normalizeTrade);
   } catch(e) { trades=[]; }
 }
 
@@ -807,8 +809,8 @@ async function addTrade() {
   const name     = document.getElementById('f-name')?.value||TW_NAMES[ticker]||ticker;
   const note     = document.getElementById('f-note')?.value||'';
   try {
-    const t = await saveTrade({ticker,market:mkt,name,shares,buyprice:bp,curprice,buydate,note});
-    trades.unshift(t);
+    const raw = await saveTrade({ticker,market:mkt,name,shares,buyprice:bp,curprice,buydate,note});
+    trades.unshift(normalizeTrade(raw));
     setPage('dashboard');
     alert('✓ 新增成功！');
   } catch(e) { alert('新增失敗：'+e.message); }

@@ -346,6 +346,7 @@ async function onLogin() {
 }
 
 function normalizeTrade(t) {
+  console.log('[normalizeTrade] raw:', JSON.stringify(t));
   const buyprice  = t.buyprice  ?? t.price     ?? 0;
   const shares    = t.shares    ?? t.qty       ?? 0;
   const curprice  = t.curprice  ?? t.currPrice ?? buyprice;

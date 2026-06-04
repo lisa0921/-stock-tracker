@@ -840,9 +840,15 @@ function openSellModal(id) {
     <div class="modal-title">賣出 ${t.ticker}
       <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer">✕</button>
     </div>
-    <div class="form-field">
-      <label>賣出日期</label>
-      <input type="date" id="m-selldate" value="${today}">
+    <div class="form-row">
+      <div class="form-field">
+        <label>賣出股數（持有 ${fmtNum(t.shares,0)} 股）</label>
+        <input type="number" id="m-sellqty" value="${t.shares}" min="1" max="${t.shares}" step="1" oninput="previewSell(${id})">
+      </div>
+      <div class="form-field">
+        <label>賣出日期</label>
+        <input type="date" id="m-selldate" value="${today}">
+      </div>
     </div>
     <div class="form-field">
       <label>賣出價格</label>
@@ -854,31 +860,66 @@ function openSellModal(id) {
 }
 
 function previewSell(id) {
-  const t  = trades.find(x=>x.id===id);
-  const sp = parseFloat(document.getElementById('m-sellprice')?.value);
-  if (!t||!sp) return;
-  const sym  = getSym(t.market);
-  const cost = calcCost(t);
-  const fee  = calcFees(t.market,t.shares,sp,true);
-  const sell = t.shares*sp - fee.total;
-  const pnl  = sell-cost;
-  const pct  = pnl/cost;
+  const t   = trades.find(x=>x.id===id);
+  const sp  = parseFloat(document.getElementById('m-sellprice')?.value);
+  const qty = parseFloat(document.getElementById('m-sellqty')?.value)||t?.shares;
+  if (!t||!sp||!qty) return;
+  const sym     = getSym(t.market);
+  const partial = qty < t.shares;
+  // 按比例計算這部分的成本
+  const costPer  = calcCost(t) / t.shares;
+  const partCost = costPer * qty;
+  const fee      = calcFees(t.market, qty, sp, true);
+  const sellAmt  = qty * sp - fee.total;
+  const pnl      = sellAmt - partCost;
+  const pct      = pnl / partCost;
   document.getElementById('sell-preview').innerHTML = `
     <div class="fee-box">
-      <div class="fee-row"><span>賣出金額</span><span>${sym}${fmtNum(t.shares*sp,0)}</span></div>
+      ${partial ? `<div class="fee-row" style="color:var(--blue)"><span>⚡ 部分賣出</span><span>${fmtNum(qty,0)} / ${fmtNum(t.shares,0)} 股</span></div>` : ''}
+      <div class="fee-row"><span>賣出金額</span><span>${sym}${fmtNum(qty*sp,0)}</span></div>
       <div class="fee-row"><span>手續費+稅</span><span>${sym}${fmtNum(fee.total,0)}</span></div>
       <div class="fee-row total"><span>損益</span><span style="color:${pnl>=0?'var(--up)':'var(--dn)'}">${pnl>=0?'+':''}${sym}${fmtNum(Math.abs(pnl),0)} (${fmtPct(pct)})</span></div>
+      ${partial ? `<div class="fee-row" style="color:var(--text3)"><span>剩餘持倉</span><span>${fmtNum(t.shares-qty,0)} 股</span></div>` : ''}
     </div>`;
 }
 
 async function confirmSell(id) {
-  const t        = trades.find(x=>x.id===id);
-  const selldate = document.getElementById('m-selldate')?.value;
-  const sellprice= parseFloat(document.getElementById('m-sellprice')?.value);
-  if (!selldate||!sellprice) { alert('請填寫賣出日期與價格'); return; }
-  await updateTrade(id,{selldate,sellprice});
-  const idx = trades.findIndex(x=>x.id===id);
-  if (idx>=0) { trades[idx].selldate=selldate; trades[idx].sellprice=sellprice; trades[idx].curprice=sellprice; }
+  const t         = trades.find(x=>x.id===id);
+  const selldate  = document.getElementById('m-selldate')?.value;
+  const sellprice = parseFloat(document.getElementById('m-sellprice')?.value);
+  const sellqty   = parseFloat(document.getElementById('m-sellqty')?.value)||t?.shares;
+  if (!selldate||!sellprice||!sellqty) { alert('請填寫賣出日期、價格與股數'); return; }
+  if (sellqty > t.shares) { alert(`賣出股數不可超過持有股數 ${t.shares}`); return; }
+
+  const partial = sellqty < t.shares;
+
+  if (!partial) {
+    // 全部賣出：更新原本這筆
+    await updateTrade(id, {selldate, sellprice});
+    const idx = trades.findIndex(x=>x.id===id);
+    if (idx>=0) { trades[idx].selldate=selldate; trades[idx].sellprice=sellprice; trades[idx].curprice=sellprice; }
+  } else {
+    // 部分賣出：原持倉減股數，另建一筆已實現記錄
+    const remaining = t.shares - sellqty;
+    await updateTrade(id, {qty: remaining});
+    const idx = trades.findIndex(x=>x.id===id);
+    if (idx>=0) trades[idx].shares = remaining;
+
+    // 新增已實現那筆
+    const soldRaw = await saveTrade({
+      ticker:   t.ticker,
+      market:   t.market,
+      name:     t.name,
+      shares:   sellqty,
+      buyprice: t.buyprice,
+      buydate:  t.buydate,
+      note:     t.note,
+      selldate,
+      sellprice,
+    });
+    trades.push(normalizeTrade(soldRaw));
+  }
+
   closeModal();
   renderPage();
 }
@@ -1078,7 +1119,11 @@ async function clearHistory() {
   if (!sold.length) { alert('沒有已實現交易可清空'); return; }
   if (!confirm(`確定要刪除全部 ${sold.length} 筆已實現交易？此動作不可復原。`)) return;
   try {
-    await sbFetch(`/rest/v1/trades?selldate=not.is.null&user_id=eq.${session.user.id}`, {method:'DELETE'});
+    // 涵蓋兩種情況：selldate 有值，或 type='sell'（舊格式）
+    await sbFetch(
+      `/rest/v1/trades?or=(selldate.not.is.null,type.eq.sell)&user_id=eq.${session.user.id}`,
+      {method:'DELETE'}
+    );
     trades = trades.filter(t=>!t.selldate);
     renderPage();
   } catch(e) { alert('清空失敗：'+e.message); }

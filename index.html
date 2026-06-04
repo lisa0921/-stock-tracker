@@ -748,7 +748,7 @@ function renderTradeCard(t) {
     </div>
     <div class="trade-actions">
       <button class="btn btn-secondary btn-sm" onclick="openSellModal(${t.id})">賣出</button>
-      <button class="btn btn-secondary btn-sm" onclick="openEditPrice(${t.id})">更新價格</button>
+      <button class="btn btn-secondary btn-sm" onclick="openEditModal(${t.id})">✏️ 編輯</button>
       <button class="btn btn-danger btn-sm" onclick="openDeleteModal(${t.id})">🗑 刪除</button>
     </div>
   </div>`;
@@ -898,6 +898,109 @@ function openEditPrice(id) {
   document.getElementById('modal').style.display='flex';
 }
 
+function openEditModal(id) {
+  const t = trades.find(x=>x.id===id);
+  if (!t) return;
+  const isSold = !!t.selldate;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-title">✏️ 編輯 ${t.ticker}
+      <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>市場</label>
+        <select id="e-mkt">
+          <option value="TW"  ${t.market==='TW'   ?'selected':''}>🇹🇼 台股</option>
+          <option value="ETF" ${t.market==='ETF'  ?'selected':''}>📦 台ETF</option>
+          <option value="US"  ${t.market==='US'   ?'selected':''}>🇺🇸 美股</option>
+          <option value="USETF"${t.market==='USETF'?'selected':''}>📦 美ETF</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>代號</label>
+        <input type="text" id="e-ticker" value="${t.ticker}" style="text-transform:uppercase">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>股票名稱</label>
+      <input type="text" id="e-name" value="${t.name||''}">
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>買入日期</label>
+        <input type="date" id="e-buydate" value="${t.buydate||''}">
+      </div>
+      <div class="form-field">
+        <label>股數</label>
+        <input type="number" id="e-shares" value="${t.shares||''}">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>買入價格</label>
+        <input type="number" id="e-buyprice" value="${t.buyprice||''}" step="0.01">
+      </div>
+      <div class="form-field">
+        <label>現價</label>
+        <input type="number" id="e-curprice" value="${t.curprice||''}" step="0.01">
+      </div>
+    </div>
+    ${isSold ? `
+    <div class="form-row">
+      <div class="form-field">
+        <label>賣出日期</label>
+        <input type="date" id="e-selldate" value="${t.selldate||''}">
+      </div>
+      <div class="form-field">
+        <label>賣出價格</label>
+        <input type="number" id="e-sellprice" value="${t.sellprice||''}" step="0.01">
+      </div>
+    </div>` : ''}
+    <div class="form-field">
+      <label>備註</label>
+      <input type="text" id="e-note" value="${t.note||''}">
+    </div>
+    <div id="edit-err" style="font-size:12px;color:var(--dn);min-height:16px;margin-bottom:8px"></div>
+    <button class="btn btn-primary btn-full" onclick="saveEdit(${id})">儲存變更</button>`;
+  document.getElementById('modal').style.display='flex';
+}
+
+async function saveEdit(id) {
+  const t = trades.find(x=>x.id===id);
+  if (!t) return;
+  const ticker   = (document.getElementById('e-ticker')?.value||'').toUpperCase().trim();
+  const mkt      = document.getElementById('e-mkt')?.value||t.market;
+  const name     = document.getElementById('e-name')?.value||'';
+  const buydate  = document.getElementById('e-buydate')?.value||t.buydate;
+  const shares   = parseFloat(document.getElementById('e-shares')?.value);
+  const buyprice = parseFloat(document.getElementById('e-buyprice')?.value);
+  const curprice = parseFloat(document.getElementById('e-curprice')?.value)||buyprice;
+  const note     = document.getElementById('e-note')?.value||'';
+  const selldate  = document.getElementById('e-selldate')?.value||null;
+  const sellprice = parseFloat(document.getElementById('e-sellprice')?.value)||null;
+  if (!ticker||!shares||!buyprice||!buydate) {
+    document.getElementById('edit-err').textContent='請填寫必要欄位';
+    return;
+  }
+  try {
+    const patch = {
+      ticker, market:mkt, name,
+      date:buydate, qty:shares, price:buyprice,
+      note,
+      ...(selldate  ? {selldate}  : {selldate:null}),
+      ...(sellprice ? {sellprice} : {sellprice:null}),
+    };
+    await updateTrade(id, patch);
+    // 更新記憶體
+    const idx = trades.findIndex(x=>x.id===id);
+    if (idx>=0) trades[idx] = normalizeTrade({...trades[idx], ...patch, buyprice, shares, buydate, curprice});
+    closeModal();
+    renderPage();
+  } catch(e) {
+    document.getElementById('edit-err').textContent='儲存失敗：'+e.message;
+  }
+}
+
 async function savePrice(id) {
   const p = parseFloat(document.getElementById('m-curprice')?.value);
   if (!p) return;
@@ -929,9 +1032,12 @@ function renderHistory() {
           <div class="hist-ticker">${t.ticker} <span class="tag ${tagCls[t.market]||'tag-tw'}">${t.market}</span></div>
           <div class="hist-meta">${t.buydate} → ${t.selldate} · ${daysDiff(t.buydate,t.selldate)}天</div>
         </div>
-        <div class="hist-right">
-          <div class="hist-pnl" style="color:${pnl>=0?'var(--up)':'var(--dn)'}">${pnl>=0?'+':''}${sy}${fmtNum(Math.abs(pnl),0)}</div>
-          <div style="font-size:10px;color:var(--text3);font-family:var(--mono)">${fmtPct(pct)}</div>
+        <div class="hist-right" style="display:flex;align-items:center;gap:8px">
+          <div>
+            <div class="hist-pnl" style="color:${pnl>=0?'var(--up)':'var(--dn)'}">${pnl>=0?'+':''}${sy}${fmtNum(Math.abs(pnl),0)}</div>
+            <div style="font-size:10px;color:var(--text3);font-family:var(--mono)">${fmtPct(pct)}</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="openEditModal(${t.id})" style="flex-shrink:0">✏️</button>
         </div>
       </div>`;
     }).join('')}

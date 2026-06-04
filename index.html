@@ -253,6 +253,7 @@ let rules = { global:{ sl:8, tp:15, trail:5, avg:10 }, stocks:{} };
 let authMode = 'login';
 let currentPage = 'dashboard';
 let pageFilter = 'all';
+let usdTwd = 32; // 預設匯率，登入後自動更新
 
 // ══════════════════════════════════════════════
 // SUPABASE
@@ -342,11 +343,11 @@ async function onLogin() {
   document.getElementById('header-user').textContent = session.user?.email||'';
   await loadTrades();
   await loadRules();
+  await fetchUsdTwd();
   renderPage();
 }
 
 function normalizeTrade(t) {
-  console.log('[normalizeTrade] raw:', JSON.stringify(t));
   const buyprice  = t.buyprice  ?? t.price     ?? 0;
   const shares    = t.shares    ?? t.qty       ?? 0;
   const curprice  = t.curprice  ?? t.currPrice ?? buyprice;
@@ -438,13 +439,25 @@ async function fetchPrice(ticker, mkt) {
   try {
     const res = await fetch(`${PROXY}?symbol=${sym}`, {cache:'no-store'});
     const data = await res.json();
-    console.log('[fetchPrice]', sym, JSON.stringify(data));
     const price = parseFloat(data?.price);
     return (!isNaN(price) && price > 0) ? price : null;
   } catch(e) {
     console.error('[fetchPrice]', sym, e.message);
     return null;
   }
+}
+
+async function fetchUsdTwd() {
+  try {
+    const res = await fetch(`${PROXY}?symbol=USDTWD=X`, {cache:'no-store'});
+    const data = await res.json();
+    if (data?.price > 0) usdTwd = data.price;
+  } catch(e) {}
+}
+
+// 換算成台幣（美股乘匯率，台股不動）
+function toTWD(amount, market) {
+  return (market==='US' || market==='USETF') ? amount * usdTwd : amount;
 }
 
 async function lookupStock() {
@@ -655,11 +668,11 @@ function renderPage() {
 function renderDashboard() {
   const holding = trades.filter(t=>!t.selldate);
   const sold    = trades.filter(t=>t.selldate);
-  const totalCost = holding.reduce((s,t)=>s+calcCost(t),0);
-  const totalMV   = holding.reduce((s,t)=>s+calcMV(t),0);
+  const totalCost = holding.reduce((s,t)=>s+toTWD(calcCost(t),t.market),0);
+  const totalMV   = holding.reduce((s,t)=>s+toTWD(calcMV(t),t.market),0);
   const unrealPnL = totalMV-totalCost;
   const unrealPct = totalCost>0 ? unrealPnL/totalCost : 0;
-  const realPnL   = sold.reduce((s,t)=>s+calcPnL(t),0);
+  const realPnL   = sold.reduce((s,t)=>s+toTWD(calcPnL(t),t.market),0);
   const alertCount= holding.filter(t=>checkAlerts(t).length>0).length;
 
   const mktLabels={all:'全部',TW:'台股',ETF:'台ETF',US:'美股',USETF:'美ETF'};
@@ -703,7 +716,6 @@ function renderDashboard() {
 }
 
 function renderTradeCard(t) {
-  console.log('[renderCard]', t.ticker, 'buyprice:', t.buyprice, 'shares:', t.shares, 'buydate:', t.buydate);
   const pnl = calcPnL(t);
   const pct = calcPct(t);
   const sym = getSym(t.market);
@@ -899,12 +911,15 @@ async function savePrice(id) {
 function renderHistory() {
   const sold = trades.filter(t=>t.selldate).sort((a,b)=>new Date(b.selldate)-new Date(a.selldate));
   if (!sold.length) return '<div class="empty">📋 尚無已實現交易</div>';
-  const totalPnL = sold.reduce((s,t)=>s+calcPnL(t),0);
+  const totalPnL = sold.reduce((s,t)=>s+toTWD(calcPnL(t),t.market),0);
   const tagCls={TW:'tag-tw',ETF:'tag-etf',US:'tag-us',USETF:'tag-usetf'};
   return `
     <div class="sum-card" style="margin-bottom:12px;">
-      <div class="sum-label">已實現總損益</div>
+      <div class="sum-label">已實現總損益（折台幣）</div>
       <div class="sum-val ${totalPnL>=0?'up':'dn'}">${totalPnL>=0?'+':''}NT$${fmtNum(Math.abs(totalPnL),0)}</div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+      <button class="btn btn-danger btn-sm" onclick="clearHistory()">🗑 清空歷史</button>
     </div>
     <div class="section-title" style="margin-bottom:8px">CLOSED TRADES · ${sold.length}</div>
     ${sold.map(t=>{
@@ -950,6 +965,17 @@ function renderAlerts() {
       </div>`;
     }).join('') : '<div class="empty">✅ 目前無觸發提醒</div>'}
     <div style="height:20px"></div>`;
+}
+
+async function clearHistory() {
+  const sold = trades.filter(t=>t.selldate);
+  if (!sold.length) { alert('沒有已實現交易可清空'); return; }
+  if (!confirm(`確定要刪除全部 ${sold.length} 筆已實現交易？此動作不可復原。`)) return;
+  try {
+    await sbFetch(`/rest/v1/trades?selldate=not.is.null&user_id=eq.${session.user.id}`, {method:'DELETE'});
+    trades = trades.filter(t=>!t.selldate);
+    renderPage();
+  } catch(e) { alert('清空失敗：'+e.message); }
 }
 
 async function saveGlobalRule() {
@@ -1010,10 +1036,10 @@ function exportCSV() {
 function showSummaryModal() {
   const holding  = trades.filter(t=>!t.selldate);
   const sold     = trades.filter(t=>t.selldate);
-  const totalCost= holding.reduce((s,t)=>s+calcCost(t),0);
-  const totalMV  = holding.reduce((s,t)=>s+calcMV(t),0);
+  const totalCost= holding.reduce((s,t)=>s+toTWD(calcCost(t),t.market),0);
+  const totalMV  = holding.reduce((s,t)=>s+toTWD(calcMV(t),t.market),0);
   const unrealPnL= totalMV-totalCost;
-  const realPnL  = sold.reduce((s,t)=>s+calcPnL(t),0);
+  const realPnL  = sold.reduce((s,t)=>s+toTWD(calcPnL(t),t.market),0);
   const allFees  = trades.reduce((s,t)=>{
     const bf=calcFees(t.market,t.shares,t.buyprice,false).total;
     const sf=t.sellprice?calcFees(t.market,t.shares,t.sellprice,true).total:0;

@@ -423,9 +423,13 @@ async function fetchPrice(ticker, mkt) {
   try {
     const res = await fetch(`${PROXY}?symbol=${sym}`, {cache:'no-store'});
     const data = await res.json();
+    console.log('[fetchPrice]', sym, JSON.stringify(data));
     const price = parseFloat(data?.price);
     return (!isNaN(price) && price > 0) ? price : null;
-  } catch(e) { return null; }
+  } catch(e) {
+    console.error('[fetchPrice]', sym, e.message);
+    return null;
+  }
 }
 
 async function lookupStock() {
@@ -449,8 +453,7 @@ async function refreshAllPrices() {
   for (const t of holding) {
     const price = await fetchPrice(t.ticker, t.market);
     if (price != null) {
-      t.curprice = price;
-      await updateTrade(t.id, {curprice: price});
+      t.curprice = price;   // 只更新記憶體，不存 DB
       ok++;
     } else {
       fail++;
@@ -845,7 +848,7 @@ async function confirmSell(id) {
   const selldate = document.getElementById('m-selldate')?.value;
   const sellprice= parseFloat(document.getElementById('m-sellprice')?.value);
   if (!selldate||!sellprice) { alert('請填寫賣出日期與價格'); return; }
-  await updateTrade(id,{selldate,sellprice,curprice:sellprice});
+  await updateTrade(id,{selldate,sellprice});
   const idx = trades.findIndex(x=>x.id===id);
   if (idx>=0) { trades[idx].selldate=selldate; trades[idx].sellprice=sellprice; trades[idx].curprice=sellprice; }
   closeModal();
@@ -870,9 +873,8 @@ function openEditPrice(id) {
 async function savePrice(id) {
   const p = parseFloat(document.getElementById('m-curprice')?.value);
   if (!p) return;
-  await updateTrade(id,{curprice:p});
   const idx = trades.findIndex(x=>x.id===id);
-  if (idx>=0) trades[idx].curprice=p;
+  if (idx>=0) trades[idx].curprice=p;  // 只更新記憶體
   closeModal();
   renderPage();
 }

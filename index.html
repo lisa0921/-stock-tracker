@@ -703,6 +703,7 @@ function renderDashboard() {
 }
 
 function renderTradeCard(t) {
+  console.log('[renderCard]', t.ticker, 'buyprice:', t.buyprice, 'shares:', t.shares, 'buydate:', t.buydate);
   const pnl = calcPnL(t);
   const pct = calcPct(t);
   const sym = getSym(t.market);

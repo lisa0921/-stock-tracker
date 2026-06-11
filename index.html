@@ -350,7 +350,7 @@ async function onLogin() {
 function normalizeTrade(t) {
   const buyprice  = t.buyprice  ?? t.price     ?? 0;
   const shares    = t.shares    ?? t.qty       ?? 0;
-  const curprice  = t.curprice  ?? t.currPrice ?? buyprice;
+  const curprice  = t.curprice  ?? t.curr_price ?? t.currPrice ?? buyprice;
   const buydate   = t.buydate   ?? t.date      ?? '';
   const isSell    = t.type === 'sell';
   const selldate  = t.selldate  ?? (isSell ? buydate : null);
@@ -378,6 +378,7 @@ async function saveTrade(t) {
     qty:       t.shares,       // DB 欄位名稱
     price:     t.buyprice,     // DB 欄位名稱
     date:      t.buydate,      // DB 欄位名稱
+    curr_price: t.curprice ?? t.buyprice,
     note:      t.note    || '',
     ...(t.selldate  ? {selldate:  t.selldate}  : {}),
     ...(t.sellprice ? {sellprice: t.sellprice} : {}),
@@ -451,7 +452,8 @@ async function fetchUsdTwd() {
   try {
     const res = await fetch(`${PROXY}?symbol=USDTWD=X`, {cache:'no-store'});
     const data = await res.json();
-    if (data?.price > 0) usdTwd = data.price;
+    const rate = parseFloat(data?.price);
+    if (!isNaN(rate) && rate > 0) usdTwd = rate;
   } catch(e) {}
 }
 
@@ -481,7 +483,8 @@ async function refreshAllPrices() {
   for (const t of holding) {
     const price = await fetchPrice(t.ticker, t.market);
     if (price != null) {
-      t.curprice = price;   // 只更新記憶體，不存 DB
+      t.curprice = price;
+      try { await updateTrade(t.id, {curr_price:price}); } catch(e) {}  // 同步存回 DB，重新整理後不會跑掉
       ok++;
     } else {
       fail++;
@@ -544,6 +547,9 @@ function fmtNum(n, dec=0) {
   return n.toFixed(dec).replace(/\B(?=(\d{3})+(?!\d))/g,',');
 }
 function fmtPct(n) { return (n>=0?'+':'')+(n*100).toFixed(2)+'%'; }
+function esc(s) {
+  return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 function getSym(mkt) { return (mkt==='US'||mkt==='USETF')?'$':'NT$'; }
 
 // ══════════════════════════════════════════════
@@ -607,13 +613,13 @@ function closeModal() {
 function openDeleteModal(id) {
   const t = trades.find(x => x.id===id);
   if (!t) return;
-  const KEY = t.ticker;
+  const KEY = esc(t.ticker);
   document.getElementById('modal-body').innerHTML = `
     <div class="modal-title">⚠️ 刪除確認
       <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer">✕</button>
     </div>
     <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.8">
-      確定要刪除 <strong style="color:var(--text)">${t.ticker}${t.name?' · '+t.name:''}</strong> 嗎？<br>
+      確定要刪除 <strong style="color:var(--text)">${KEY}${t.name?' · '+esc(t.name):''}</strong> 嗎？<br>
       請輸入股票代號 <strong style="color:var(--dn);font-family:var(--mono)">${KEY}</strong> 確認刪除
     </div>
     <div class="form-field">
@@ -621,15 +627,18 @@ function openDeleteModal(id) {
       <input type="text" id="delete-confirm-input" placeholder="${KEY}" style="text-transform:uppercase;letter-spacing:2px;font-family:var(--mono);">
     </div>
     <div id="delete-err" style="font-size:12px;color:var(--dn);min-height:18px;margin-bottom:8px"></div>
-    <button class="btn btn-danger btn-full" onclick="confirmDelete(${id},'${KEY}')">確認刪除</button>`;
+    <button class="btn btn-danger btn-full" onclick="confirmDelete(${id})">確認刪除</button>`;
   document.getElementById('modal').style.display='flex';
   setTimeout(()=>document.getElementById('delete-confirm-input')?.focus(),100);
   document.getElementById('delete-confirm-input').addEventListener('keydown', e=>{
-    if(e.key==='Enter') confirmDelete(id,KEY);
+    if(e.key==='Enter') confirmDelete(id);
   });
 }
 
-async function confirmDelete(id, key) {
+async function confirmDelete(id) {
+  const t = trades.find(x => x.id===id);
+  if (!t) return;
+  const key = t.ticker.toUpperCase().trim();
   const input = (document.getElementById('delete-confirm-input')?.value||'').toUpperCase().trim();
   if (input!==key) {
     document.getElementById('delete-err').textContent=`❌ 代號錯誤，請輸入 ${key}`;
@@ -729,8 +738,8 @@ function renderTradeCard(t) {
   <div class="trade-card ${cls}">
     <div class="trade-top">
       <div>
-        <div class="trade-ticker">${t.ticker} <span class="tag ${tagCls[t.market]||'tag-tw'}">${mktLabel[t.market]||t.market}</span></div>
-        <div class="trade-name">${t.name||''}</div>
+        <div class="trade-ticker">${esc(t.ticker)} <span class="tag ${tagCls[t.market]||'tag-tw'}">${mktLabel[t.market]||esc(t.market)}</span></div>
+        <div class="trade-name">${esc(t.name||'')}</div>
         <div style="margin-top:4px">${alertBadges}</div>
       </div>
       <div class="trade-pnl">
@@ -837,7 +846,7 @@ function openSellModal(id) {
   const today = new Date().toISOString().slice(0,10);
   const sym = getSym(t.market);
   document.getElementById('modal-body').innerHTML = `
-    <div class="modal-title">賣出 ${t.ticker}
+    <div class="modal-title">賣出 ${esc(t.ticker)}
       <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer">✕</button>
     </div>
     <div class="form-row">
@@ -872,7 +881,7 @@ function previewSell(id) {
   const fee      = calcFees(t.market, qty, sp, true);
   const sellAmt  = qty * sp - fee.total;
   const pnl      = sellAmt - partCost;
-  const pct      = pnl / partCost;
+  const pct      = partCost > 0 ? pnl / partCost : 0;
   document.getElementById('sell-preview').innerHTML = `
     <div class="fee-box">
       ${partial ? `<div class="fee-row" style="color:var(--blue)"><span>⚡ 部分賣出</span><span>${fmtNum(qty,0)} / ${fmtNum(t.shares,0)} 股</span></div>` : ''}
@@ -885,39 +894,47 @@ function previewSell(id) {
 
 async function confirmSell(id) {
   const t         = trades.find(x=>x.id===id);
+  if (!t) return;
   const selldate  = document.getElementById('m-selldate')?.value;
   const sellprice = parseFloat(document.getElementById('m-sellprice')?.value);
-  const sellqty   = parseFloat(document.getElementById('m-sellqty')?.value)||t?.shares;
+  const sellqty   = parseFloat(document.getElementById('m-sellqty')?.value)||t.shares;
   if (!selldate||!sellprice||!sellqty) { alert('請填寫賣出日期、價格與股數'); return; }
+  if (sellqty <= 0) { alert('賣出股數必須大於 0'); return; }
   if (sellqty > t.shares) { alert(`賣出股數不可超過持有股數 ${t.shares}`); return; }
 
   const partial = sellqty < t.shares;
 
-  if (!partial) {
-    // 全部賣出：更新原本這筆
-    await updateTrade(id, {selldate, sellprice});
-    const idx = trades.findIndex(x=>x.id===id);
-    if (idx>=0) { trades[idx].selldate=selldate; trades[idx].sellprice=sellprice; trades[idx].curprice=sellprice; }
-  } else {
-    // 部分賣出：原持倉減股數，另建一筆已實現記錄
-    const remaining = t.shares - sellqty;
-    await updateTrade(id, {qty: remaining});
-    const idx = trades.findIndex(x=>x.id===id);
-    if (idx>=0) trades[idx].shares = remaining;
+  try {
+    if (!partial) {
+      // 全部賣出：更新原本這筆
+      await updateTrade(id, {selldate, sellprice, curr_price:sellprice});
+      const idx = trades.findIndex(x=>x.id===id);
+      if (idx>=0) { trades[idx].selldate=selldate; trades[idx].sellprice=sellprice; trades[idx].curprice=sellprice; }
+    } else {
+      // 部分賣出：原持倉減股數，另建一筆已實現記錄
+      const remaining = t.shares - sellqty;
+      await updateTrade(id, {qty: remaining});
+      const idx = trades.findIndex(x=>x.id===id);
+      if (idx>=0) trades[idx].shares = remaining;
 
-    // 新增已實現那筆
-    const soldRaw = await saveTrade({
-      ticker:   t.ticker,
-      market:   t.market,
-      name:     t.name,
-      shares:   sellqty,
-      buyprice: t.buyprice,
-      buydate:  t.buydate,
-      note:     t.note,
-      selldate,
-      sellprice,
-    });
-    trades.push(normalizeTrade(soldRaw));
+      // 新增已實現那筆
+      const soldRaw = await saveTrade({
+        ticker:   t.ticker,
+        market:   t.market,
+        name:     t.name,
+        shares:   sellqty,
+        buyprice: t.buyprice,
+        curprice: sellprice,
+        buydate:  t.buydate,
+        note:     t.note,
+        selldate,
+        sellprice,
+      });
+      trades.push(normalizeTrade(soldRaw));
+    }
+  } catch(e) {
+    alert('賣出失敗：'+e.message);
+    return;
   }
 
   closeModal();
@@ -928,7 +945,7 @@ function openEditPrice(id) {
   const t = trades.find(x=>x.id===id);
   if (!t) return;
   document.getElementById('modal-body').innerHTML = `
-    <div class="modal-title">更新現價 ${t.ticker}
+    <div class="modal-title">更新現價 ${esc(t.ticker)}
       <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer">✕</button>
     </div>
     <div class="form-field">
@@ -944,7 +961,7 @@ function openEditModal(id) {
   if (!t) return;
   const isSold = !!t.selldate;
   document.getElementById('modal-body').innerHTML = `
-    <div class="modal-title">✏️ 編輯 ${t.ticker}
+    <div class="modal-title">✏️ 編輯 ${esc(t.ticker)}
       <button onclick="closeModal()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer">✕</button>
     </div>
     <div class="form-row">
@@ -959,12 +976,12 @@ function openEditModal(id) {
       </div>
       <div class="form-field">
         <label>代號</label>
-        <input type="text" id="e-ticker" value="${t.ticker}" style="text-transform:uppercase">
+        <input type="text" id="e-ticker" value="${esc(t.ticker)}" style="text-transform:uppercase">
       </div>
     </div>
     <div class="form-field">
       <label>股票名稱</label>
-      <input type="text" id="e-name" value="${t.name||''}">
+      <input type="text" id="e-name" value="${esc(t.name||'')}">
     </div>
     <div class="form-row">
       <div class="form-field">
@@ -999,7 +1016,7 @@ function openEditModal(id) {
     </div>` : ''}
     <div class="form-field">
       <label>備註</label>
-      <input type="text" id="e-note" value="${t.note||''}">
+      <input type="text" id="e-note" value="${esc(t.note||'')}">
     </div>
     <div id="edit-err" style="font-size:12px;color:var(--dn);min-height:16px;margin-bottom:8px"></div>
     <button class="btn btn-primary btn-full" onclick="saveEdit(${id})">儲存變更</button>`;
@@ -1027,6 +1044,7 @@ async function saveEdit(id) {
     const patch = {
       ticker, market:mkt, name,
       date:buydate, qty:shares, price:buyprice,
+      curr_price:curprice,
       note,
       ...(selldate  ? {selldate}  : {selldate:null}),
       ...(sellprice ? {sellprice} : {sellprice:null}),
@@ -1046,7 +1064,8 @@ async function savePrice(id) {
   const p = parseFloat(document.getElementById('m-curprice')?.value);
   if (!p) return;
   const idx = trades.findIndex(x=>x.id===id);
-  if (idx>=0) trades[idx].curprice=p;  // 只更新記憶體
+  if (idx>=0) trades[idx].curprice=p;
+  try { await updateTrade(id, {curr_price:p}); } catch(e) {}
   closeModal();
   renderPage();
 }
@@ -1070,7 +1089,7 @@ function renderHistory() {
       const pnl=calcPnL(t); const pct=calcPct(t); const sy=getSym(t.market);
       return `<div class="hist-row">
         <div class="hist-left">
-          <div class="hist-ticker">${t.ticker} <span class="tag ${tagCls[t.market]||'tag-tw'}">${t.market}</span></div>
+          <div class="hist-ticker">${esc(t.ticker)} <span class="tag ${tagCls[t.market]||'tag-tw'}">${esc(t.market)}</span></div>
           <div class="hist-meta">${t.buydate} → ${t.selldate} · ${daysDiff(t.buydate,t.selldate)}天</div>
         </div>
         <div class="hist-right" style="display:flex;align-items:center;gap:8px">
@@ -1106,7 +1125,7 @@ function renderAlerts() {
       const alerts=checkAlerts(t);
       return `<div class="trade-card ${calcPnL(t)>=0?'up-card':'dn-card'}">
         <div class="trade-top">
-          <div><div class="trade-ticker">${t.ticker}</div><div class="trade-name">${t.name||''}</div></div>
+          <div><div class="trade-ticker">${esc(t.ticker)}</div><div class="trade-name">${esc(t.name||'')}</div></div>
           <div>${alerts.map(a=>`<div class="alert-badge alert-${a.type}" style="margin-bottom:3px">${a.msg}</div>`).join('')}</div>
         </div>
       </div>`;
@@ -1162,6 +1181,10 @@ function renderExport() {
     <div style="height:20px"></div>`;
 }
 
+function csvCell(v) {
+  const s = String(v??'');
+  return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s;
+}
 function exportCSV() {
   const BOM = '\uFEFF';
   const hdr = '市場,代號,名稱,買入日,賣出日,股數,買入價,賣出價,現價,買入手續費,賣出手續費,實際成本,實際收入,損益,報酬率%,持有天數,狀態\n';
@@ -1171,11 +1194,11 @@ function exportCSV() {
     const sellFee = t.sellprice ? calcFees(t.market,t.shares,t.sellprice,true) : null;
     const sellAmt = t.sellprice ? t.shares*t.sellprice - sellFee.total : '';
     const pnl     = t.sellprice ? (sellAmt-cost).toFixed(0) : (calcMV(t)-cost).toFixed(0);
-    const pct     = t.sellprice ? ((sellAmt-cost)/cost*100).toFixed(2) : ((calcMV(t)-cost)/cost*100).toFixed(2);
+    const pct     = cost>0 ? (t.sellprice ? ((sellAmt-cost)/cost*100).toFixed(2) : ((calcMV(t)-cost)/cost*100).toFixed(2)) : '0.00';
     return [t.market,t.ticker,t.name||'',t.buydate,t.selldate||'',t.shares,t.buyprice,t.sellprice||'',t.curprice||'',
       buyFee.total.toFixed(0),sellFee?sellFee.total.toFixed(0):'',cost.toFixed(0),
       sellAmt!==''?sellAmt.toFixed(0):'',pnl,pct,daysDiff(t.buydate,t.selldate||null),
-      t.selldate?'已實現':'持有中'].join(',');
+      t.selldate?'已實現':'持有中'].map(csvCell).join(',');
   }).join('\n');
   const blob = new Blob([BOM+hdr+rows],{type:'text/csv;charset=utf-8'});
   const url  = URL.createObjectURL(blob);
